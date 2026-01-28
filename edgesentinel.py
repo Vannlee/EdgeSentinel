@@ -1,21 +1,166 @@
 import argparse
 from argparse import RawTextHelpFormatter
-# import os
-# import sys
-# import re
-# import requests
-# from bs4 import BeautifulSoup
-# import json
-# from datetime import datetime
-# import time
-# from urllib.parse import urljoin, urlparse
+import os
+import sys
+import re
+import requests
+from bs4 import BeautifulSoup
+import json
+from datetime import datetime
+import time
+from urllib.parse import urljoin, urlparse
 
-def quick_scan(url):
-    "function will scan for first 12 CWEs of A10"
+# Global session object for maintaining authentication state
+session = requests.Session()
+
+def login_to_website(login_url, username, password, username_field='username', password_field='password'):
+    """
+    Authenticates to a website using provided credentials.
+    
+    Args:
+        login_url (str): URL of the login page/endpoint
+        username (str): Username for authentication
+        password (str): Password for authentication
+        username_field (str): Name of the username form field (default: 'username')
+        password_field (str): Name of the password form field (default: 'password')
+    
+    Returns:
+        bool: True if login successful, False otherwise
+    """
     try:
-        print(f"Conducting scanning for the first 12 CWEs for {url}")
+        print(f"\n[*] Attempting to login to {login_url}")
+        print(f"[*] Username: {username}")
+        
+        # First, get the login page to retrieve any CSRF tokens or session cookies
+        response = session.get(login_url, timeout=10)
+        
+        # Parse the login form to find additional fields (like CSRF tokens)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        login_form = soup.find('form')
+        
+        # Prepare login data
+        login_data = {
+            username_field: username,
+            password_field: password
+        }
+        
+        # Check for hidden fields (like CSRF tokens) and add them
+        if login_form:
+            hidden_inputs = login_form.find_all('input', type='hidden')
+            for hidden in hidden_inputs:
+                field_name = hidden.get('name')
+                field_value = hidden.get('value', '')
+                if field_name:
+                    login_data[field_name] = field_value
+                    print(f"[+] Found hidden field: {field_name}")
+        
+        # Determine the form action (login endpoint)
+        if login_form and login_form.get('action'):
+            form_action = login_form.get('action')
+            if form_action:
+                login_url = urljoin(login_url, form_action)
+        
+        # Perform the login POST request
+        print(f"[*] Submitting credentials to {login_url}")
+        login_response = session.post(login_url, data=login_data, timeout=10, allow_redirects=True)
+        
+        # Check if login was successful
+        # Common indicators: redirect to dashboard, absence of login form, presence of logout button
+        response_text = login_response.text.lower()
+        
+        # Check for success indicators
+        success_indicators = ['logout', 'dashboard', 'welcome', 'profile', 'signed in', 'logged in']
+        failure_indicators = ['login failed', 'invalid credentials', 'incorrect password', 'username or password', 'authentication failed']
+        
+        has_success = any(indicator in response_text for indicator in success_indicators)
+        has_failure = any(indicator in response_text for indicator in failure_indicators)
+        
+        if has_failure:
+            print("[!] Login failed: Invalid credentials or login error detected")
+            return False
+        elif has_success or login_response.status_code == 200:
+            print("[+] Login successful! Session established.")
+            print(f"[+] Cookies: {len(session.cookies)} cookie(s) stored")
+            return True
+        else:
+            print(f"[!] Login status unclear (Status: {login_response.status_code})")
+            print("[*] Proceeding with caution...")
+            return True
+            
+    except requests.exceptions.ConnectionError:
+        print(f"[!] Error: Could not connect to {login_url}")
+        return False
+    except requests.exceptions.Timeout:
+        print(f"[!] Error: Request to {login_url} timed out")
+        return False
+    except Exception as e:
+        print(f"[!] Login error: {e}")
+        return False
 
-    except:
+
+def quick_scan(url, html_form=None, session_obj=None):
+    """Function will scan for first 12 CWEs of A10"""
+    try:
+        print(f"\n[*] EdgeSentinel - Quick Scan Mode")
+        print(f"[*] Target: {url}")
+        print(f"[*] Testing first 12 CWEs of OWASP A10\n")
+        
+        # Use provided session or global session
+        if session_obj is None:
+            session_obj = session
+        
+        # Fetch webpage if no HTML form provided
+        if html_form:
+            print(f"[+] Using provided HTML form...")
+            html_content = html_form
+        else:
+            print(f"[+] Fetching webpage...")
+            response = fetch_webpage(url, session_obj=session_obj)
+            if not response:
+                print("[!] Failed to fetch webpage. Exiting.")
+                return
+            html_content = response['html']
+            print(f"[+] Webpage fetched successfully (Status: {response['status_code']})")
+        
+        # Identify input parameters
+        print(f"[+] Analyzing HTML forms...")
+        parameters = identify_input_parameters(html_content, url)
+        
+        if not parameters:
+            print("[!] No input parameters found in the HTML.")
+            return
+        
+        print(f"[+] Found {len(parameters)} input parameter(s)\n")
+        
+        # Generate payloads
+        payloads = generate_edge_case_payloads()
+        
+        # Test each parameter
+        all_results = []
+        for param in parameters:
+            print(f"[*] Testing parameter: {param['param_name']} (type: {param['param_type']})")
+            print(f"    Form action: {param['form_action']}")
+            print(f"    Method: {param['method']}")
+            
+            # Get original response for this endpoint
+            original_response = fetch_webpage(param['form_action'], session_obj=session_obj)
+            
+            # Execute tests
+            results = execute_test_suite(param, payloads, original_response, session_obj=session_obj)
+            all_results.extend(results)
+        
+        # Display results summary
+        print(f"\n[+] Scan complete!")
+        print(f"[+] Total tests executed: {len(all_results)}")
+        
+        # Analyze and display findings
+        print(f"\n[*] Analyzing results...\n")
+        findings = analyze_test_results(all_results)
+        
+        display_findings(findings)
+        
+    except Exception as e:
+        print(f"[!] Error during quick scan: {e}")
         print("Use '-h' for more information on the usage of EdgeSentinel")
 
 
@@ -28,175 +173,250 @@ def quick_scan(url):
 # generate_report() - Creates downloadable HTML and JSON reports
 # edge_case_scanner() - Main orchestrator function
 
-# def fetch_webpage(url):
-#     """
-#     Fetches the HTML content of the target URL and extracts metadata.
-#     
-#     Args:
-#         url (str): Target URL to fetch
-#     
-#     Returns:
-#         dict: Contains 'html', 'status_code', 'headers', 'response_time'
-#     
-#     Implementation:
-#         1. Use requests.get() with timeout (e.g., 10 seconds)
-#         2. Record response time using time.time()
-#         3. Store status code, headers, and HTML content
-#         4. Handle exceptions (ConnectionError, Timeout, HTTPError)
-#         5. Return structured dictionary with all response data
-#     
-#     Example:
-#         response_data = fetch_webpage("https://example.com")
-#         html_content = response_data['html']
-#     """
-#     pass
+def fetch_webpage(url, session_obj=None):
+    """
+    Fetches the HTML content of the target URL and extracts metadata.
+    
+    Args:
+        url (str): Target URL to fetch
+        session_obj (requests.Session): Session object for maintaining authentication
+    
+    Returns:
+        dict: Contains 'html', 'status_code', 'headers', 'response_time'
+    """
+    try:
+        # Use session if provided, otherwise use requests directly
+        if session_obj is None:
+            session_obj = requests
+        
+        start_time = time.time()
+        response = session_obj.get(url, timeout=10, allow_redirects=True)
+        response_time = time.time() - start_time
+        
+        return {
+            'html': response.text,
+            'status_code': response.status_code,
+            'headers': dict(response.headers),
+            'response_time': response_time,
+            'url': response.url
+        }
+    except requests.exceptions.ConnectionError:
+        print(f"[!] Error: Could not connect to {url}")
+        return None
+    except requests.exceptions.Timeout:
+        print(f"[!] Error: Request to {url} timed out")
+        return None
+    except requests.exceptions.HTTPError as e:
+        print(f"[!] HTTP Error: {e}")
+        return None
+    except Exception as e:
+        print(f"[!] Unexpected error: {e}")
+        return None
 
 
-# def identify_input_parameters(html_content, url):
-#     """
-#     Parses HTML to identify all input parameters for testing.
-#     
-#     Args:
-#         html_content (str): HTML content from target page
-#         url (str): Base URL for resolving relative form actions
-#     
-#     Returns:
-#         list: List of dicts containing form/input metadata
-#     
-#     Implementation:
-#         1. Parse HTML using BeautifulSoup
-#         2. Find all <form> elements
-#         3. For each form, extract:
-#            - action URL (resolve relative to base URL)
-#            - method (GET/POST)
-#            - all input fields (name, type, value, placeholder)
-#         4. Also identify URL query parameters from links
-#         5. Find AJAX endpoints by analyzing <script> tags
-#         6. Store each parameter with metadata:
-#            {
-#                'param_name': 'search',
-#                'param_type': 'text',
-#                'form_action': 'https://example.com/search',
-#                'method': 'GET',
-#                'context': 'search form'
-#            }
-#     
-#     Edge Cases to Detect:
-#         - Hidden input fields
-#         - Disabled inputs (might be enabled via JS)
-#         - Dynamic forms loaded via JavaScript
-#         - Multiple forms on same page
-#     """
-#     pass
+def identify_input_parameters(html_content, url):
+    """
+    Parses HTML to identify all input parameters for testing.
+    
+    Args:
+        html_content (str): HTML content from target page or provided HTML form
+        url (str): Base URL for resolving relative form actions
+    
+    Returns:
+        list: List of dicts containing form/input metadata
+    """
+    soup = BeautifulSoup(html_content, 'html.parser')
+    parameters = []
+    
+    # Find all forms
+    forms = soup.find_all('form')
+    
+    for idx, form in enumerate(forms):
+        form_action = form.get('action', '')
+        # Resolve relative URLs
+        if form_action:
+            form_action = urljoin(url, form_action)
+        else:
+            form_action = url
+            
+        form_method = form.get('method', 'GET').upper()
+        
+        # Find all input fields in this form
+        inputs = form.find_all(['input', 'textarea', 'select'])
+        
+        for inp in inputs:
+            param_name = inp.get('name')
+            if not param_name:
+                continue
+                
+            param_type = inp.get('type', 'text')
+            param_value = inp.get('value', '')
+            placeholder = inp.get('placeholder', '')
+            disabled = inp.has_attr('disabled')
+            
+            parameters.append({
+                'param_name': param_name,
+                'param_type': param_type,
+                'form_action': form_action,
+                'method': form_method,
+                'context': f'form_{idx}',
+                'default_value': param_value,
+                'placeholder': placeholder,
+                'disabled': disabled
+            })
+    
+    return parameters
 
 
-# def generate_edge_case_payloads():
-#     """
-#     Generates comprehensive test payloads for edge case testing.
-#     
-#     Returns:
-#         dict: Categorized payloads for different vulnerability types
-#     
-#     Payload Categories:
-#     
-#     1. ERROR_DISCLOSURE_PAYLOADS (CWE-209, CWE-550):
-#         - SQL fragments: "' OR '1'='1", "1'; DROP TABLE--"
-#         - Special chars: "<>\"'`;&|", null bytes "\x00"
-#         - Path traversal: "../../../etc/passwd", "..\\windows\\system32"
-#         - Format strings: "%s%s%s%s", "${7*7}"
-#         - Script tags: "<script>alert(1)</script>"
-#     
-#     2. MISSING_PARAMETER_PAYLOADS (CWE-234):
-#         - Empty string: ""
-#         - Whitespace only: "   ", "\t\n"
-#         - Omit parameter entirely: None
-#     
-#     3. EXTRA_PARAMETER_PAYLOADS (CWE-235):
-#         - Inject additional params: "?search=test&admin=true"
-#         - Duplicate parameters: "?id=1&id=2"
-#         - Array notation: "?data[]=1&data[]=2"
-#     
-#     4. TYPE_CONFUSION_PAYLOADS (CWE-248, CWE-369):
-#         - String instead of number: "abc" for numeric field
-#         - Extremely large numbers: "99999999999999999999"
-#         - Zero: "0" (for divide by zero)
-#         - Negative numbers: "-1", "-999"
-#         - Floating point: "1.1e308" (overflow)
-#     
-#     5. SPECIAL_VALUES_PAYLOADS (CWE-476, CWE-390):
-#         - Null/None representations: "null", "NULL", "nil"
-#         - Boolean confusion: "true", "false", "True", "1", "0"
-#         - Unicode edge cases: "\\u0000", "\\uFFFF"
-#         - Very long strings: "A" * 10000
-#         - Empty arrays/objects: "[]", "{}"
-#     
-#     6. ENCODING_PAYLOADS:
-#         - URL encoding: "%3Cscript%3E"
-#         - Double encoding: "%253Cscript%253E"
-#         - UTF-8 variations: Different encodings of same char
-#         - Case variations: "SELECT", "select", "SeLeCt"
-#     
-#     7. TIMING_PAYLOADS (for detecting error conditions):
-#         - Sleep/delay commands: "sleep(5)", "WAITFOR DELAY '00:00:05'"
-#         - Compute-intensive: Calculate large factorials
-#     
-#     Implementation:
-#         Return structured dict like:
-#         {
-#             'error_disclosure': [...],
-#             'missing_param': [...],
-#             'type_confusion': [...],
-#             ...
-#         }
-#     """
-#     pass
+def generate_edge_case_payloads():
+    """
+    Generates comprehensive test payloads for edge case testing.
+    Focuses on the first 12 CWEs for quick scan mode.
+    
+    Returns:
+        dict: Categorized payloads for different vulnerability types
+    """
+    return {
+        'error_disclosure': [  # CWE-209, CWE-550
+            "' OR '1'='1",
+            "1'; DROP TABLE users--",
+            "<>\"'`;&|",
+            "\x00",
+            "../../../etc/passwd",
+            "..\\..\\..\\windows\\system32\\config\\sam",
+            "%s%s%s%s",
+            "${7*7}",
+            "<script>alert('XSS')</script>",
+            "{{7*7}}",
+            "1/0",
+            "SELECT * FROM users"
+        ],
+        'missing_param': [  # CWE-234
+            "",
+            "   ",
+            "\t\n",
+            None
+        ],
+        'extra_param': [  # CWE-235
+            "admin=true",
+            "role=administrator",
+            "debug=1"
+        ],
+        'type_confusion': [  # CWE-248, CWE-369
+            "abc",
+            "99999999999999999999",
+            "0",
+            "-1",
+            "-999",
+            "1.1e308",
+            "NaN",
+            "Infinity"
+        ],
+        'special_values': [  # CWE-476, CWE-390
+            "null",
+            "NULL",
+            "nil",
+            "true",
+            "false",
+            "True",
+            "False",
+            "[]",
+            "{}",
+            "A" * 10000
+        ],
+        'status_code_tests': [  # CWE-394
+            "/../admin",
+            "/../../etc/passwd",
+            "//example.com"
+        ]
+    }
 
 
-# def execute_test_suite(parameter_info, payloads, original_response):
-#     """
-#     Executes all test cases and captures responses for analysis.
-#     
-#     Args:
-#         parameter_info (dict): Parameter metadata from identify_input_parameters()
-#         payloads (dict): Test payloads from generate_edge_case_payloads()
-#         original_response (dict): Baseline response from fetch_webpage()
-#     
-#     Returns:
-#         list: Test results with findings
-#     
-#     Implementation:
-#         1. Create baseline by sending valid request
-#         2. For each payload category:
-#            a. For each payload:
-#               - Build request (GET/POST based on form method)
-#               - Send request with timeout and error handling
-#               - Record:
-#                 * Status code
-#                 * Response time
-#                 * Response headers (especially error headers)
-#                 * Response body
-#                 * Any exceptions/errors
-#               - Add delay between requests (e.g., 0.5s to avoid DOS)
-#         
-#         3. Store results in structured format:
-#            {
-#                'payload': '<script>alert(1)</script>',
-#                'category': 'error_disclosure',
-#                'status_code': 500,
-#                'response_time': 1.23,
-#                'response_body': '...',
-#                'headers': {...},
-#                'exception': None,
-#                'timestamp': '2026-01-27 10:30:45'
-#            }
-#     
-#     Error Handling:
-#         - Wrap each request in try/except
-#         - Continue on individual failures
-#         - Log all exceptions for later analysis
-#         - Handle timeout scenarios gracefully
-#     """
-#     pass
+def execute_test_suite(parameter_info, payloads, original_response, session_obj=None):
+    """
+    Executes all test cases and captures responses for analysis.
+    
+    Args:
+        parameter_info (dict): Parameter metadata from identify_input_parameters()
+        payloads (dict): Test payloads from generate_edge_case_payloads()
+        original_response (dict): Baseline response from fetch_webpage()
+        session_obj (requests.Session): Session object for maintaining authentication
+    
+    Returns:
+        list: Test results with findings
+    """
+    # Use session if provided, otherwise use requests directly
+    if session_obj is None:
+        session_obj = requests
+    
+    results = []
+    
+    for category, payload_list in payloads.items():
+        print(f"[*] Testing {category} payloads...")
+        
+        for payload in payload_list:
+            if payload is None:
+                # Test missing parameter - skip sending it
+                continue
+                
+            try:
+                start_time = time.time()
+                
+                # Build request based on method
+                if parameter_info['method'] == 'POST':
+                    data = {parameter_info['param_name']: payload}
+                    response = requests.post(
+                        parameter_info['form_action'],
+                        data=data,
+                        timeout=10,
+                        allow_redirects=True
+                    )
+                else:  # GET
+                    params = {parameter_info['param_name']: payload}
+                    response = requests.get(
+                        parameter_info['form_action'],
+                        params=params,
+                        timeout=10,
+                        allow_redirects=True
+                    )
+                
+                response_time = time.time() - start_time
+                
+                result = {
+                    'payload': str(payload),
+                    'category': category,
+                    'param_name': parameter_info['param_name'],
+                    'status_code': response.status_code,
+                    'response_time': response_time,
+                    'response_body': response.text,
+                    'headers': dict(response.headers),
+                    'exception': None,
+                    'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                }
+                
+                results.append(result)
+                
+                # Add delay to avoid overwhelming the server
+                time.sleep(0.3)
+                
+            except requests.exceptions.Timeout:
+                results.append({
+                    'payload': str(payload),
+                    'category': category,
+                    'param_name': parameter_info['param_name'],
+                    'exception': 'Timeout',
+                    'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                })
+            except Exception as e:
+                results.append({
+                    'payload': str(payload),
+                    'category': category,
+                    'param_name': parameter_info['param_name'],
+                    'exception': str(e),
+                    'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                })
+    
+    return results
 
 
 # def analyze_responses(test_results, original_response):
@@ -571,6 +791,97 @@ def quick_scan(url):
 # ============================================================================
 
 
+def analyze_test_results(results):
+    """Analyze test results and identify vulnerabilities"""
+    findings = []
+    
+    for result in results:
+        if 'exception' in result and result.get('exception'):
+            # Skip results with exceptions for now
+            continue
+            
+        if 'status_code' not in result:
+            continue
+            
+        status = result['status_code']
+        body = result.get('response_body', '')
+        category = result.get('category', '')
+        payload = result.get('payload', '')
+        
+        # CWE-209: Error message disclosure
+        if status == 500 or 'error' in body.lower() or 'exception' in body.lower():
+            if any(keyword in body.lower() for keyword in ['traceback', 'stack trace', 'sql', 'mysql', 'postgresql', 'oracle']):
+                findings.append({
+                    'cwe': 'CWE-209',
+                    'name': 'Generation of Error Message Containing Sensitive Information',
+                    'severity': 'HIGH',
+                    'payload': payload,
+                    'evidence': f"Status: {status}, Response contains error details",
+                    'param': result.get('param_name', 'unknown')
+                })
+        
+        # CWE-234: Missing parameter handling
+        if category == 'missing_param' and status == 500:
+            findings.append({
+                'cwe': 'CWE-234',
+                'name': 'Failure to Handle Missing Parameter',
+                'severity': 'MEDIUM',
+                'payload': payload,
+                'evidence': f"Status: {status} when parameter missing/empty",
+                'param': result.get('param_name', 'unknown')
+            })
+        
+        # CWE-369: Divide by zero
+        if category == 'type_confusion' and payload == '0' and status == 500:
+            findings.append({
+                'cwe': 'CWE-369',
+                'name': 'Divide By Zero',
+                'severity': 'MEDIUM',
+                'payload': payload,
+                'evidence': f"Status: {status} when zero value provided",
+                'param': result.get('param_name', 'unknown')
+            })
+        
+        # CWE-394: Unexpected status code
+        if status not in [200, 201, 204, 301, 302, 400, 401, 403, 404]:
+            findings.append({
+                'cwe': 'CWE-394',
+                'name': 'Unexpected Status Code or Return Value',
+                'severity': 'LOW',
+                'payload': payload,
+                'evidence': f"Unusual status code: {status}",
+                'param': result.get('param_name', 'unknown')
+            })
+    
+    return findings
+
+
+def display_findings(findings):
+    """Display findings in a formatted way"""
+    if not findings:
+        print("[+] No vulnerabilities detected!")
+        return
+    
+    print(f"[!] Found {len(findings)} potential vulnerability/vulnerabilities:\n")
+    
+    severity_counts = {'HIGH': 0, 'MEDIUM': 0, 'LOW': 0}
+    
+    for finding in findings:
+        severity = finding['severity']
+        severity_counts[severity] += 1
+        
+        print(f"[{severity}] {finding['cwe']}: {finding['name']}")
+        print(f"    Parameter: {finding['param']}")
+        print(f"    Payload: {finding['payload'][:100]}..." if len(finding['payload']) > 100 else f"    Payload: {finding['payload']}")
+        print(f"    Evidence: {finding['evidence']}")
+        print()
+    
+    print(f"\n[*] Summary:")
+    print(f"    HIGH severity: {severity_counts['HIGH']}")
+    print(f"    MEDIUM severity: {severity_counts['MEDIUM']}")
+    print(f"    LOW severity: {severity_counts['LOW']}")
+
+
 def specify_scan(url, scan_cwe):
     "function will scan for specified CWEs"
     try:
@@ -633,6 +944,27 @@ def main():
                                 "checking for the first 12 CWEs under A10 "
                                 "instead of doing a complete analysis for all "
                                 "24 CWEs")
+    parser.add_argument("-a", "--html_form",
+                        help="HTML form to run the script on. "
+                            "Example: -a='<input>$test$</input>'",
+                        metavar="HTML")
+    parser.add_argument("-u", "--username",
+                        help="Username for authentication (use with -p/--password and -l/--login-url)",
+                        metavar="USERNAME")
+    parser.add_argument("-p", "--password",
+                        help="Password for authentication (use with -u/--username and -l/--login-url)",
+                        metavar="PASSWORD")
+    parser.add_argument("-l", "--login-url",
+                        help="Login page URL for authentication (use with -u/--username and -p/--password)",
+                        metavar="LOGIN_URL")
+    parser.add_argument("--username-field",
+                        help="Name of the username form field (default: 'username')",
+                        default="username",
+                        metavar="FIELD")
+    parser.add_argument("--password-field",
+                        help="Name of the password form field (default: 'password')",
+                        default="password",
+                        metavar="FIELD")
     parser_args.add_argument("-s", "--specify",
                              help="Used to specify the CWEs to be tested "
                                 "for, using numbers separated by commas."
@@ -672,9 +1004,29 @@ def main():
             
     arguments = parser.parse_args()
     url = arguments.url
+    html_form = arguments.html_form if hasattr(arguments, 'html_form') else None
+    
+    # Handle authentication if credentials provided
+    if arguments.username and arguments.password and arguments.login_url:
+        login_success = login_to_website(
+            login_url=arguments.login_url,
+            username=arguments.username,
+            password=arguments.password,
+            username_field=arguments.username_field,
+            password_field=arguments.password_field
+        )
+        
+        if not login_success:
+            print("[!] Failed to authenticate. Exiting...")
+            print("[*] Tip: Check your credentials and login URL")
+            return
+    elif any([arguments.username, arguments.password, arguments.login_url]):
+        print("[!] Error: Authentication requires all three: --username, --password, and --login-url")
+        print("    Use '-h' for more information")
+        return
 
     if (arguments.quick_scan):
-        quick_scan(url)
+        quick_scan(url, html_form, session_obj=session)
     elif (arguments.specify):
         scan_cwe = (arguments.specify).split(",")
         specify_scan(url, scan_cwe)
