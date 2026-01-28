@@ -214,6 +214,72 @@ def safe_request(
         return None, str(e), elapsed_ms
 
 
+def perform_login(
+    session: requests.Session,
+    login_url: str,
+    username: str,
+    password: str,
+    username_field: str = "username",
+    password_field: str = "password",
+    timeout: int = 10,
+) -> Tuple[bool, str]:
+    """
+    Performs form-based login.
+    Returns (success: bool, message: str)
+    """
+    print(f"[+] Attempting login to: {login_url}")
+    print(f"[+] Username field: {username_field}, Password field: {password_field}")
+    
+    # Prepare login data
+    login_data = {
+        username_field: username,
+        password_field: password,
+    }
+    
+    # Attempt login
+    resp, err, elapsed = safe_request(
+        session=session,
+        method="POST",
+        url=login_url,
+        data=login_data,
+        timeout=timeout,
+        allow_redirects=True,
+    )
+    
+    if err or resp is None:
+        return False, f"Login request failed: {err}"
+    
+    # Check for common success indicators
+    # Note: This is heuristic - adjust based on your target application
+    success_indicators = [
+        resp.status_code == 200,
+        "logout" in resp.text.lower(),
+        "welcome" in resp.text.lower(),
+        "dashboard" in resp.text.lower(),
+    ]
+    
+    # Check for common failure indicators
+    failure_indicators = [
+        "invalid" in resp.text.lower() and ("username" in resp.text.lower() or "password" in resp.text.lower()),
+        "incorrect" in resp.text.lower(),
+        "failed" in resp.text.lower() and "login" in resp.text.lower(),
+    ]
+    
+    if any(failure_indicators):
+        return False, "Login appears to have failed (invalid credentials or error message detected)"
+    
+    if any(success_indicators):
+        print(f"[+] Login successful! Session cookies: {len(session.cookies)} cookie(s) set")
+        return True, "Login successful"
+    
+    # If unclear, check if cookies were set (common for session-based auth)
+    if len(session.cookies) > 0:
+        print(f"[+] Login completed. Session cookies: {len(session.cookies)} cookie(s) set")
+        return True, "Login completed (cookies set)"
+    
+    return False, "Login status unclear - no clear success or failure indicators found"
+
+
 # -----------------------------
 # Crawl & endpoint discovery
 # -----------------------------
@@ -820,11 +886,36 @@ def run_scan(
     user_agent: str,
     no_crawl: bool,
     target_param: Optional[str],
+    login_url: Optional[str] = None,
+    username: Optional[str] = None,
+    password: Optional[str] = None,
+    username_field: str = "username",
+    password_field: str = "password",
 ) -> Tuple[str, Optional[str]]:
     if not is_http_url(url):
         raise ValueError("Invalid URL. Must start with http:// or https://")
 
     session = make_session(user_agent=user_agent)
+    
+    # Perform login if credentials are provided
+    if login_url and username and password:
+        success, message = perform_login(
+            session=session,
+            login_url=login_url,
+            username=username,
+            password=password,
+            username_field=username_field,
+            password_field=password_field,
+            timeout=timeout,
+        )
+        if not success:
+            print(f"[!] Warning: {message}")
+            print("[!] Continuing with scan anyway...")
+        else:
+            print(f"[+] {message}")
+    elif login_url or username or password:
+        print("[!] Warning: Incomplete login credentials provided. Skipping login.")
+        print("[!] All three are required: --login-url, --username, --password")
 
     print("[*] EdgeSentinel - Edge Case Vulnerability Scanner (CLI)")
     print(f"[*] Target: {url}")
@@ -976,6 +1067,13 @@ def main():
     # Targeting
     parser.add_argument("--param", default=None, help="Only test a specific parameter name (optional)")
 
+    # Authentication
+    parser.add_argument("--login-url", default=None, help="URL of the login page/endpoint (optional)")
+    parser.add_argument("--username", default=None, help="Username for authentication (optional)")
+    parser.add_argument("--password", default=None, help="Password for authentication (optional)")
+    parser.add_argument("--username-field", default="username", help="Name of username field in login form (default: username)")
+    parser.add_argument("--password-field", default="password", help="Name of password field in login form (default: password)")
+
     # Output
     parser.add_argument("--outdir", default="reports", help="Output directory (default: reports)")
     parser.add_argument("--format", choices=["json", "html", "both"], default="both", help="Report format (default: both)")
@@ -1009,6 +1107,11 @@ def main():
         user_agent=args.user_agent,
         no_crawl=args.no_crawl,
         target_param=args.param,
+        login_url=args.login_url,
+        username=args.username,
+        password=args.password,
+        username_field=args.username_field,
+        password_field=args.password_field,
     )
 
 
