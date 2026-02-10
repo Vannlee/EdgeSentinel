@@ -1,0 +1,2508 @@
+{
+  "meta": {
+    "target_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+    "timestamp": "20260208_132900",
+    "mode": "normal",
+    "pages_crawled": 1,
+    "endpoints_found": 2,
+    "total_tests": 148,
+    "finding_count": 0,
+    "enabled_cwes": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24
+    ],
+    "notes": "For authorized testing only. Heuristic findings; validate manually."
+  },
+  "endpoints": [
+    {
+      "kind": "link",
+      "url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "params": [
+        "page"
+      ],
+      "context": "link: File Inclusion"
+    },
+    {
+      "kind": "form",
+      "url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "params": [
+        "Submit",
+        "id",
+        "user_token"
+      ],
+      "context": "form"
+    }
+  ],
+  "test_results": [
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "error_disclosure",
+      "payload": "' OR '1'='1",
+      "sent_params": {
+        "page": "' OR '1'='1"
+      },
+      "status_code": 200,
+      "elapsed_ms": 60,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "error_disclosure",
+      "payload": "1'--",
+      "sent_params": {
+        "page": "1'--"
+      },
+      "status_code": 200,
+      "elapsed_ms": 55,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "error_disclosure",
+      "payload": "\" OR \"1\"=\"1",
+      "sent_params": {
+        "page": "\" OR \"1\"=\"1"
+      },
+      "status_code": 200,
+      "elapsed_ms": 59,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "error_disclosure",
+      "payload": "1; DROP TABLE t--",
+      "sent_params": {
+        "page": "1; DROP TABLE t--"
+      },
+      "status_code": 200,
+      "elapsed_ms": 60,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "error_disclosure",
+      "payload": "<>\"'`;&|",
+      "sent_params": {
+        "page": "<>\"'`;&|"
+      },
+      "status_code": 200,
+      "elapsed_ms": 59,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "error_disclosure",
+      "payload": "\u0000",
+      "sent_params": {
+        "page": "\u0000"
+      },
+      "status_code": 200,
+      "elapsed_ms": 60,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "error_disclosure",
+      "payload": "../../../etc/passwd",
+      "sent_params": {
+        "page": "../../../etc/passwd"
+      },
+      "status_code": 200,
+      "elapsed_ms": 59,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "error_disclosure",
+      "payload": "..\\..\\windows\\system32",
+      "sent_params": {
+        "page": "..\\..\\windows\\system32"
+      },
+      "status_code": 200,
+      "elapsed_ms": 60,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "error_disclosure",
+      "payload": "%s%s%s%s",
+      "sent_params": {
+        "page": "%s%s%s%s"
+      },
+      "status_code": 200,
+      "elapsed_ms": 60,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "error_disclosure",
+      "payload": "${7*7}",
+      "sent_params": {
+        "page": "${7*7}"
+      },
+      "status_code": 200,
+      "elapsed_ms": 75,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "error_disclosure",
+      "payload": "{7*7}",
+      "sent_params": {
+        "page": "{7*7}"
+      },
+      "status_code": 200,
+      "elapsed_ms": 91,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "error_disclosure",
+      "payload": "<script>alert(1)</script>",
+      "sent_params": {
+        "page": "<script>alert(1)</script>"
+      },
+      "status_code": 200,
+      "elapsed_ms": 75,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "error_disclosure",
+      "payload": "<img src=x onerror=alert(1)>",
+      "sent_params": {
+        "page": "<img src=x onerror=alert(1)>"
+      },
+      "status_code": 200,
+      "elapsed_ms": 74,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "missing_param",
+      "payload": null,
+      "sent_params": {},
+      "status_code": 200,
+      "elapsed_ms": 89,
+      "content_len": 5342,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: File Inclusion :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "missing_param",
+      "payload": "",
+      "sent_params": {
+        "page": ""
+      },
+      "status_code": 200,
+      "elapsed_ms": 61,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "missing_param",
+      "payload": "   ",
+      "sent_params": {
+        "page": "   "
+      },
+      "status_code": 200,
+      "elapsed_ms": 75,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "extra_param",
+      "payload": "admin=true",
+      "sent_params": {
+        "page": "test",
+        "admin": "true"
+      },
+      "status_code": 200,
+      "elapsed_ms": 75,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "extra_param",
+      "payload": "debug=true",
+      "sent_params": {
+        "page": "test",
+        "debug": "true"
+      },
+      "status_code": 200,
+      "elapsed_ms": 60,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "type_confusion",
+      "payload": "abc",
+      "sent_params": {
+        "page": "abc"
+      },
+      "status_code": 200,
+      "elapsed_ms": 61,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "type_confusion",
+      "payload": "99999999999999999999",
+      "sent_params": {
+        "page": "99999999999999999999"
+      },
+      "status_code": 200,
+      "elapsed_ms": 60,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "type_confusion",
+      "payload": "-1",
+      "sent_params": {
+        "page": "-1"
+      },
+      "status_code": 200,
+      "elapsed_ms": 57,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "type_confusion",
+      "payload": "0",
+      "sent_params": {
+        "page": "0"
+      },
+      "status_code": 200,
+      "elapsed_ms": 57,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "type_confusion",
+      "payload": "1.1e308",
+      "sent_params": {
+        "page": "1.1e308"
+      },
+      "status_code": 200,
+      "elapsed_ms": 59,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "special_values",
+      "payload": "null",
+      "sent_params": {
+        "page": "null"
+      },
+      "status_code": 200,
+      "elapsed_ms": 57,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "special_values",
+      "payload": "NULL",
+      "sent_params": {
+        "page": "NULL"
+      },
+      "status_code": 200,
+      "elapsed_ms": 60,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "special_values",
+      "payload": "nil",
+      "sent_params": {
+        "page": "nil"
+      },
+      "status_code": 200,
+      "elapsed_ms": 62,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "special_values",
+      "payload": "true",
+      "sent_params": {
+        "page": "true"
+      },
+      "status_code": 200,
+      "elapsed_ms": 61,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "special_values",
+      "payload": "false",
+      "sent_params": {
+        "page": "false"
+      },
+      "status_code": 200,
+      "elapsed_ms": 60,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "special_values",
+      "payload": "[]",
+      "sent_params": {
+        "page": "[]"
+      },
+      "status_code": 200,
+      "elapsed_ms": 61,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "special_values",
+      "payload": "{}",
+      "sent_params": {
+        "page": "{}"
+      },
+      "status_code": 200,
+      "elapsed_ms": 62,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "special_values",
+      "payload": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "sent_params": {
+        "page": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      },
+      "status_code": 200,
+      "elapsed_ms": 62,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "encoding",
+      "payload": "%3Cscript%3E",
+      "sent_params": {
+        "page": "%3Cscript%3E"
+      },
+      "status_code": 200,
+      "elapsed_ms": 62,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "encoding",
+      "payload": "%253Cscript%253E",
+      "sent_params": {
+        "page": "%253Cscript%253E"
+      },
+      "status_code": 200,
+      "elapsed_ms": 63,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "encoding",
+      "payload": "SeLeCt",
+      "sent_params": {
+        "page": "SeLeCt"
+      },
+      "status_code": 200,
+      "elapsed_ms": 61,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "encoding",
+      "payload": "SELECT",
+      "sent_params": {
+        "page": "SELECT"
+      },
+      "status_code": 200,
+      "elapsed_ms": 61,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "timing",
+      "payload": "sleep(2)",
+      "sent_params": {
+        "page": "sleep(2)"
+      },
+      "status_code": 200,
+      "elapsed_ms": 63,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/fi/?page=include.php",
+      "method": "GET",
+      "parameter": "page",
+      "category": "timing",
+      "payload": "WAITFOR DELAY '00:00:02'",
+      "sent_params": {
+        "page": "WAITFOR DELAY '00:00:02'"
+      },
+      "status_code": 200,
+      "elapsed_ms": 55,
+      "content_len": 22,
+      "body_snippet": "ERROR: File not found!",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "error_disclosure",
+      "payload": "' OR '1'='1",
+      "sent_params": {
+        "Submit": "' OR '1'='1",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 113,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "error_disclosure",
+      "payload": "1'--",
+      "sent_params": {
+        "Submit": "1'--",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 118,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "error_disclosure",
+      "payload": "\" OR \"1\"=\"1",
+      "sent_params": {
+        "Submit": "\" OR \"1\"=\"1",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 116,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "error_disclosure",
+      "payload": "1; DROP TABLE t--",
+      "sent_params": {
+        "Submit": "1; DROP TABLE t--",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 117,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "error_disclosure",
+      "payload": "<>\"'`;&|",
+      "sent_params": {
+        "Submit": "<>\"'`;&|",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 121,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "error_disclosure",
+      "payload": "\u0000",
+      "sent_params": {
+        "Submit": "\u0000",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 122,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "error_disclosure",
+      "payload": "../../../etc/passwd",
+      "sent_params": {
+        "Submit": "../../../etc/passwd",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 121,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "error_disclosure",
+      "payload": "..\\..\\windows\\system32",
+      "sent_params": {
+        "Submit": "..\\..\\windows\\system32",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 122,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "error_disclosure",
+      "payload": "%s%s%s%s",
+      "sent_params": {
+        "Submit": "%s%s%s%s",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 120,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "error_disclosure",
+      "payload": "${7*7}",
+      "sent_params": {
+        "Submit": "${7*7}",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 117,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "error_disclosure",
+      "payload": "{7*7}",
+      "sent_params": {
+        "Submit": "{7*7}",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 123,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "error_disclosure",
+      "payload": "<script>alert(1)</script>",
+      "sent_params": {
+        "Submit": "<script>alert(1)</script>",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 118,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "error_disclosure",
+      "payload": "<img src=x onerror=alert(1)>",
+      "sent_params": {
+        "Submit": "<img src=x onerror=alert(1)>",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 118,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "missing_param",
+      "payload": null,
+      "sent_params": {
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 56,
+      "content_len": 4698,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "missing_param",
+      "payload": "",
+      "sent_params": {
+        "Submit": "",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 121,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "missing_param",
+      "payload": "   ",
+      "sent_params": {
+        "Submit": "   ",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 182,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "extra_param",
+      "payload": "admin=true",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "test",
+        "admin": "true"
+      },
+      "status_code": 200,
+      "elapsed_ms": 136,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "extra_param",
+      "payload": "debug=true",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "test",
+        "debug": "true"
+      },
+      "status_code": 200,
+      "elapsed_ms": 119,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "type_confusion",
+      "payload": "abc",
+      "sent_params": {
+        "Submit": "abc",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 136,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "type_confusion",
+      "payload": "99999999999999999999",
+      "sent_params": {
+        "Submit": "99999999999999999999",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 152,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "type_confusion",
+      "payload": "-1",
+      "sent_params": {
+        "Submit": "-1",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 139,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "type_confusion",
+      "payload": "0",
+      "sent_params": {
+        "Submit": "0",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 137,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "type_confusion",
+      "payload": "1.1e308",
+      "sent_params": {
+        "Submit": "1.1e308",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 124,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "special_values",
+      "payload": "null",
+      "sent_params": {
+        "Submit": "null",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 119,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "special_values",
+      "payload": "NULL",
+      "sent_params": {
+        "Submit": "NULL",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 119,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "special_values",
+      "payload": "nil",
+      "sent_params": {
+        "Submit": "nil",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 151,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "special_values",
+      "payload": "true",
+      "sent_params": {
+        "Submit": "true",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 150,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "special_values",
+      "payload": "false",
+      "sent_params": {
+        "Submit": "false",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 118,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "special_values",
+      "payload": "[]",
+      "sent_params": {
+        "Submit": "[]",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 187,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "special_values",
+      "payload": "{}",
+      "sent_params": {
+        "Submit": "{}",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 120,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "special_values",
+      "payload": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "sent_params": {
+        "Submit": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 122,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "encoding",
+      "payload": "%3Cscript%3E",
+      "sent_params": {
+        "Submit": "%3Cscript%3E",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 121,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "encoding",
+      "payload": "%253Cscript%253E",
+      "sent_params": {
+        "Submit": "%253Cscript%253E",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 135,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "encoding",
+      "payload": "SeLeCt",
+      "sent_params": {
+        "Submit": "SeLeCt",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 115,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "encoding",
+      "payload": "SELECT",
+      "sent_params": {
+        "Submit": "SELECT",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 116,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "timing",
+      "payload": "sleep(2)",
+      "sent_params": {
+        "Submit": "sleep(2)",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 125,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "Submit",
+      "category": "timing",
+      "payload": "WAITFOR DELAY '00:00:02'",
+      "sent_params": {
+        "Submit": "WAITFOR DELAY '00:00:02'",
+        "id": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 116,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "error_disclosure",
+      "payload": "' OR '1'='1",
+      "sent_params": {
+        "Submit": "test",
+        "id": "' OR '1'='1",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 122,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "error_disclosure",
+      "payload": "1'--",
+      "sent_params": {
+        "Submit": "test",
+        "id": "1'--",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 120,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "error_disclosure",
+      "payload": "\" OR \"1\"=\"1",
+      "sent_params": {
+        "Submit": "test",
+        "id": "\" OR \"1\"=\"1",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 115,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "error_disclosure",
+      "payload": "1; DROP TABLE t--",
+      "sent_params": {
+        "Submit": "test",
+        "id": "1; DROP TABLE t--",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 121,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "error_disclosure",
+      "payload": "<>\"'`;&|",
+      "sent_params": {
+        "Submit": "test",
+        "id": "<>\"'`;&|",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 119,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "error_disclosure",
+      "payload": "\u0000",
+      "sent_params": {
+        "Submit": "test",
+        "id": "\u0000",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 119,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "error_disclosure",
+      "payload": "../../../etc/passwd",
+      "sent_params": {
+        "Submit": "test",
+        "id": "../../../etc/passwd",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 122,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "error_disclosure",
+      "payload": "..\\..\\windows\\system32",
+      "sent_params": {
+        "Submit": "test",
+        "id": "..\\..\\windows\\system32",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 119,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "error_disclosure",
+      "payload": "%s%s%s%s",
+      "sent_params": {
+        "Submit": "test",
+        "id": "%s%s%s%s",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 138,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "error_disclosure",
+      "payload": "${7*7}",
+      "sent_params": {
+        "Submit": "test",
+        "id": "${7*7}",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 116,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "error_disclosure",
+      "payload": "{7*7}",
+      "sent_params": {
+        "Submit": "test",
+        "id": "{7*7}",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 131,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "error_disclosure",
+      "payload": "<script>alert(1)</script>",
+      "sent_params": {
+        "Submit": "test",
+        "id": "<script>alert(1)</script>",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 148,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "error_disclosure",
+      "payload": "<img src=x onerror=alert(1)>",
+      "sent_params": {
+        "Submit": "test",
+        "id": "<img src=x onerror=alert(1)>",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 116,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "missing_param",
+      "payload": null,
+      "sent_params": {
+        "Submit": "test",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 124,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "missing_param",
+      "payload": "",
+      "sent_params": {
+        "Submit": "test",
+        "id": "",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 122,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "missing_param",
+      "payload": "   ",
+      "sent_params": {
+        "Submit": "test",
+        "id": "   ",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 149,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "extra_param",
+      "payload": "admin=true",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "test",
+        "admin": "true"
+      },
+      "status_code": 200,
+      "elapsed_ms": 140,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "extra_param",
+      "payload": "debug=true",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "test",
+        "debug": "true"
+      },
+      "status_code": 200,
+      "elapsed_ms": 116,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "type_confusion",
+      "payload": "abc",
+      "sent_params": {
+        "Submit": "test",
+        "id": "abc",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 121,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "type_confusion",
+      "payload": "99999999999999999999",
+      "sent_params": {
+        "Submit": "test",
+        "id": "99999999999999999999",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 123,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "type_confusion",
+      "payload": "-1",
+      "sent_params": {
+        "Submit": "test",
+        "id": "-1",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 120,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "type_confusion",
+      "payload": "0",
+      "sent_params": {
+        "Submit": "test",
+        "id": "0",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 117,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "type_confusion",
+      "payload": "1.1e308",
+      "sent_params": {
+        "Submit": "test",
+        "id": "1.1e308",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 122,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "special_values",
+      "payload": "null",
+      "sent_params": {
+        "Submit": "test",
+        "id": "null",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 122,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "special_values",
+      "payload": "NULL",
+      "sent_params": {
+        "Submit": "test",
+        "id": "NULL",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 124,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "special_values",
+      "payload": "nil",
+      "sent_params": {
+        "Submit": "test",
+        "id": "nil",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 124,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "special_values",
+      "payload": "true",
+      "sent_params": {
+        "Submit": "test",
+        "id": "true",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 121,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "special_values",
+      "payload": "false",
+      "sent_params": {
+        "Submit": "test",
+        "id": "false",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 123,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "special_values",
+      "payload": "[]",
+      "sent_params": {
+        "Submit": "test",
+        "id": "[]",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 125,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "special_values",
+      "payload": "{}",
+      "sent_params": {
+        "Submit": "test",
+        "id": "{}",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 124,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "special_values",
+      "payload": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "sent_params": {
+        "Submit": "test",
+        "id": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 122,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "encoding",
+      "payload": "%3Cscript%3E",
+      "sent_params": {
+        "Submit": "test",
+        "id": "%3Cscript%3E",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 123,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "encoding",
+      "payload": "%253Cscript%253E",
+      "sent_params": {
+        "Submit": "test",
+        "id": "%253Cscript%253E",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 122,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "encoding",
+      "payload": "SeLeCt",
+      "sent_params": {
+        "Submit": "test",
+        "id": "SeLeCt",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 133,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "encoding",
+      "payload": "SELECT",
+      "sent_params": {
+        "Submit": "test",
+        "id": "SELECT",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 122,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "timing",
+      "payload": "sleep(2)",
+      "sent_params": {
+        "Submit": "test",
+        "id": "sleep(2)",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 121,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "id",
+      "category": "timing",
+      "payload": "WAITFOR DELAY '00:00:02'",
+      "sent_params": {
+        "Submit": "test",
+        "id": "WAITFOR DELAY '00:00:02'",
+        "user_token": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 120,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "error_disclosure",
+      "payload": "' OR '1'='1",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "' OR '1'='1"
+      },
+      "status_code": 200,
+      "elapsed_ms": 140,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "error_disclosure",
+      "payload": "1'--",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "1'--"
+      },
+      "status_code": 200,
+      "elapsed_ms": 156,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "error_disclosure",
+      "payload": "\" OR \"1\"=\"1",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "\" OR \"1\"=\"1"
+      },
+      "status_code": 200,
+      "elapsed_ms": 121,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "error_disclosure",
+      "payload": "1; DROP TABLE t--",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "1; DROP TABLE t--"
+      },
+      "status_code": 200,
+      "elapsed_ms": 120,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "error_disclosure",
+      "payload": "<>\"'`;&|",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "<>\"'`;&|"
+      },
+      "status_code": 200,
+      "elapsed_ms": 122,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "error_disclosure",
+      "payload": "\u0000",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "\u0000"
+      },
+      "status_code": 200,
+      "elapsed_ms": 155,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "error_disclosure",
+      "payload": "../../../etc/passwd",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "../../../etc/passwd"
+      },
+      "status_code": 200,
+      "elapsed_ms": 148,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "error_disclosure",
+      "payload": "..\\..\\windows\\system32",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "..\\..\\windows\\system32"
+      },
+      "status_code": 200,
+      "elapsed_ms": 122,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "error_disclosure",
+      "payload": "%s%s%s%s",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "%s%s%s%s"
+      },
+      "status_code": 200,
+      "elapsed_ms": 122,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "error_disclosure",
+      "payload": "${7*7}",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "${7*7}"
+      },
+      "status_code": 200,
+      "elapsed_ms": 132,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "error_disclosure",
+      "payload": "{7*7}",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "{7*7}"
+      },
+      "status_code": 200,
+      "elapsed_ms": 142,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "error_disclosure",
+      "payload": "<script>alert(1)</script>",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "<script>alert(1)</script>"
+      },
+      "status_code": 200,
+      "elapsed_ms": 120,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "error_disclosure",
+      "payload": "<img src=x onerror=alert(1)>",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "<img src=x onerror=alert(1)>"
+      },
+      "status_code": 200,
+      "elapsed_ms": 120,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "missing_param",
+      "payload": null,
+      "sent_params": {
+        "Submit": "test",
+        "id": "test"
+      },
+      "status_code": 200,
+      "elapsed_ms": 121,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "missing_param",
+      "payload": "",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": ""
+      },
+      "status_code": 200,
+      "elapsed_ms": 120,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "missing_param",
+      "payload": "   ",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "   "
+      },
+      "status_code": 200,
+      "elapsed_ms": 137,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "extra_param",
+      "payload": "admin=true",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "test",
+        "admin": "true"
+      },
+      "status_code": 200,
+      "elapsed_ms": 154,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "extra_param",
+      "payload": "debug=true",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "test",
+        "debug": "true"
+      },
+      "status_code": 200,
+      "elapsed_ms": 171,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "type_confusion",
+      "payload": "abc",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "abc"
+      },
+      "status_code": 200,
+      "elapsed_ms": 200,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "type_confusion",
+      "payload": "99999999999999999999",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "99999999999999999999"
+      },
+      "status_code": 200,
+      "elapsed_ms": 170,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "type_confusion",
+      "payload": "-1",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "-1"
+      },
+      "status_code": 200,
+      "elapsed_ms": 138,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "type_confusion",
+      "payload": "0",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "0"
+      },
+      "status_code": 200,
+      "elapsed_ms": 134,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "type_confusion",
+      "payload": "1.1e308",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "1.1e308"
+      },
+      "status_code": 200,
+      "elapsed_ms": 119,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "special_values",
+      "payload": "null",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "null"
+      },
+      "status_code": 200,
+      "elapsed_ms": 118,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "special_values",
+      "payload": "NULL",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "NULL"
+      },
+      "status_code": 200,
+      "elapsed_ms": 119,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "special_values",
+      "payload": "nil",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "nil"
+      },
+      "status_code": 200,
+      "elapsed_ms": 148,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "special_values",
+      "payload": "true",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "true"
+      },
+      "status_code": 200,
+      "elapsed_ms": 135,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "special_values",
+      "payload": "false",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "false"
+      },
+      "status_code": 200,
+      "elapsed_ms": 181,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "special_values",
+      "payload": "[]",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "[]"
+      },
+      "status_code": 200,
+      "elapsed_ms": 131,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "special_values",
+      "payload": "{}",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "{}"
+      },
+      "status_code": 200,
+      "elapsed_ms": 133,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "special_values",
+      "payload": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      },
+      "status_code": 200,
+      "elapsed_ms": 123,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "encoding",
+      "payload": "%3Cscript%3E",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "%3Cscript%3E"
+      },
+      "status_code": 200,
+      "elapsed_ms": 133,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "encoding",
+      "payload": "%253Cscript%253E",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "%253Cscript%253E"
+      },
+      "status_code": 200,
+      "elapsed_ms": 120,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "encoding",
+      "payload": "SeLeCt",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "SeLeCt"
+      },
+      "status_code": 200,
+      "elapsed_ms": 118,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "encoding",
+      "payload": "SELECT",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "SELECT"
+      },
+      "status_code": 200,
+      "elapsed_ms": 117,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "timing",
+      "payload": "sleep(2)",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "sleep(2)"
+      },
+      "status_code": 200,
+      "elapsed_ms": 116,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    },
+    {
+      "endpoint_url": "http://20.2.209.236/dvwa/vulnerabilities/sqli/",
+      "method": "GET",
+      "parameter": "user_token",
+      "category": "timing",
+      "payload": "WAITFOR DELAY '00:00:02'",
+      "sent_params": {
+        "Submit": "test",
+        "id": "test",
+        "user_token": "WAITFOR DELAY '00:00:02'"
+      },
+      "status_code": 200,
+      "elapsed_ms": 120,
+      "content_len": 4779,
+      "body_snippet": "<!DOCTYPE html> <html lang=\"en-GB\"> <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /> <title>Vulnerability: SQL Injection :: Damn Vulnerable Web Application (DVWA)</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"../../dvwa/css/main.css\" /> <link rel=\"icon\" type=\"\\image/ico\" href=\"../../favicon.ico\" /> <script type=\"t...",
+      "error": null
+    }
+  ],
+  "findings": []
+}

@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>EdgeSentinel Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; }
+    .card { border: 1px solid #ddd; border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+    th { background: #f6f6f6; text-align: left; }
+    .high { color: #b00020; font-weight: bold; }
+    .medium { color: #b26a00; font-weight: bold; }
+    .low { color: #1b5e20; font-weight: bold; }
+    pre { white-space: pre-wrap; word-break: break-word; }
+  </style>
+</head>
+<body>
+  <h1>EdgeSentinel Report</h1>
+
+  <div class="card">
+    <h3>Scan Metadata</h3>
+    <p><b>Target:</b> http://20.2.209.236/dvwa/vulnerabilities/sqli/</p>
+    <p><b>Timestamp:</b> 20260208_132900</p>
+    <p><b>Mode:</b> normal</p>
+    <p><b>Pages crawled:</b> 1 | <b>Endpoints found:</b> 2</p>
+    <p><b>Total tests:</b> 148 | <b>Findings:</b> 0</p>
+  </div>
+
+  <h2>Findings</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Severity</th>
+        <th>CWE</th>
+        <th>Title</th>
+        <th>Endpoint</th>
+        <th>Evidence (snippet)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="5">No findings detected by current heuristics.</td></tr>
+    </tbody>
+  </table>
+
+  <p style="margin-top:16px; color:#666;">
+    Note: This is a lightweight edge-case scanner. Findings are heuristic and should be validated manually.
+  </p>
+</body>
+</html>

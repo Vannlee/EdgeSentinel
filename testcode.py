@@ -131,16 +131,18 @@ class Finding:
 # -----------------------------
 DEFAULT_UA = "EdgeSentinel/0.1 (CLI; educational; authorized testing only)"
 
+# Generic error patterns (optional - used as additional signal)
 ERROR_KEYWORDS = [
     # stack traces / exceptions
     "traceback", "exception", "stack trace", "fatal error",
-    # common DB errors
-    "sql syntax", "mysql_fetch", "psql:", "postgresql", "ora-",
-    "sqlite", "syntax error near",
-    # file paths
-    "/var/www", "/usr/local", "c:\\", "d:\\",
-    # framework hints
-    "django", "laravel", "spring", "asp.net", "werkzeug debugger",
+    # common DB errors (generic patterns)
+    "sql syntax", "syntax error", "query failed", "database error",
+    "you have an error", "mysql", "postgresql", "sqlite", "sqlstate",
+    # file paths (disclosure)
+    "/var/www", "/usr/local", "c:\\", "d:\\", "/home/",
+    # generic error indicators
+    "warning:", "fatal:", "error:", "undefined", "null reference",
+    "division by zero", "cannot be null", "out of bounds",
 ]
 
 SQLISH_PAYLOADS = ["' OR '1'='1", "1'--", "\" OR \"1\"=\"1", "1; DROP TABLE t--"]
@@ -224,19 +226,75 @@ def perform_login(
     timeout: int = 10,
 ) -> Tuple[bool, str]:
     """
-    Performs form-based login.
+    Performs form-based login with CSRF token support.
     Returns (success: bool, message: str)
     """
     print(f"[+] Attempting login to: {login_url}")
     print(f"[+] Username field: {username_field}, Password field: {password_field}")
     
-    # Prepare login data
+    # Step 1: Fetch the login page to extract CSRF tokens
+    print("[+] Fetching login page to extract CSRF tokens...")
+    resp, err, elapsed = safe_request(
+        session=session,
+        method="GET",
+        url=login_url,
+        timeout=timeout,
+        allow_redirects=True,
+    )
+    
+    if err or resp is None:
+        return False, f"Failed to fetch login page: {err}"
+    
+    # Step 2: Parse the login form and extract CSRF tokens and hidden fields
     login_data = {
         username_field: username,
         password_field: password,
     }
     
-    # Attempt login
+    try:
+        soup = BeautifulSoup(resp.text, "html.parser")
+        
+        # Find all forms on the page
+        forms = soup.find_all("form")
+        
+        if forms:
+            # Use the first form (or find login form by action/id if multiple exist)
+            login_form = forms[0]
+            
+            # Extract all hidden input fields (including CSRF tokens)
+            hidden_inputs = login_form.find_all("input", type="hidden")
+            for hidden in hidden_inputs:
+                name = hidden.get("name")
+                value = hidden.get("value", "")
+                if name:
+                    login_data[name] = value
+                    print(f"[+] Found hidden field: {name} = {value[:50]}{'...' if len(value) > 50 else ''}")
+            
+            # Also check for common CSRF token fields in visible inputs
+            csrf_fields = ["csrf_token", "user_token", "_token", "token", "authenticity_token", "csrf"]
+            for csrf_name in csrf_fields:
+                csrf_input = login_form.find("input", attrs={"name": csrf_name})
+                if csrf_input and csrf_name not in login_data:
+                    value = csrf_input.get("value", "")
+                    login_data[csrf_name] = value
+                    print(f"[+] Found CSRF token field: {csrf_name} = {value[:50]}{'...' if len(value) > 50 else ''}")
+            
+            # Extract submit button value if it has a name (some forms require this)
+            submit_btn = login_form.find("input", type="submit")
+            if submit_btn:
+                btn_name = submit_btn.get("name")
+                btn_value = submit_btn.get("value", "")
+                if btn_name:
+                    login_data[btn_name] = btn_value
+                    print(f"[+] Found submit button: {btn_name} = {btn_value}")
+        else:
+            print("[!] Warning: No forms found on login page")
+    
+    except Exception as e:
+        print(f"[!] Warning: Error parsing login form: {e}")
+    
+    # Step 3: Attempt login with all collected data
+    print(f"[+] Submitting login with {len(login_data)} fields...")
     resp, err, elapsed = safe_request(
         session=session,
         method="POST",
@@ -566,6 +624,37 @@ def looks_like_error_disclosure(text: str) -> bool:
     return any(k in t for k in ERROR_KEYWORDS)
 
 
+def significant_content_change(baseline_len: int, test_len: int, threshold: float = 0.3) -> bool:
+    """
+    Detects if response size changed significantly (±30% by default).
+    Indicates different code path or error handling.
+    """
+    if baseline_len == 0:
+        return test_len > 100  # any substantial response when baseline was empty
+    
+    ratio = abs(test_len - baseline_len) / baseline_len
+    return ratio > threshold
+
+
+def significant_timing_change(baseline_ms: int, test_ms: int, threshold_ms: int = 1500) -> bool:
+    """
+    Detects significant slowdown suggesting expensive error handling or resource issues.
+    """
+    return test_ms > baseline_ms + threshold_ms
+
+
+def content_type_changed(baseline_headers: Dict[str, str], test_headers: Dict[str, str]) -> bool:
+    """
+    Detects if content type changed (e.g., HTML -> JSON, suggesting error response).
+    """
+    baseline_ct = baseline_headers.get("Content-Type", "").split(";")[0].strip().lower()
+    test_ct = test_headers.get("Content-Type", "").split(";")[0].strip().lower()
+    
+    if baseline_ct and test_ct:
+        return baseline_ct != test_ct
+    return False
+
+
 def severity_from_signal(high: bool, medium: bool) -> str:
     if high:
         return "HIGH"
@@ -605,13 +694,17 @@ def analyze(
         # Skip if request outright failed (still useful, but keep it lower signal)
         body = tr.body_snippet or ""
         sc = tr.status_code or 0
+        test_len = tr.content_len or 0
+        test_time = tr.elapsed_ms or 0
 
-        # CWE-248: Uncaught Exception (5xx or explicit exception indicators)
+        # BEHAVIORAL DETECTION (generic, works across all apps)
+        
+        # 1. Status code 5xx = server error (generic)
         if sc >= 500:
             add(
                 5,
-                "Possible uncaught exception (5xx)",
-                "Server returned a 5xx response to an edge-case input. This can indicate an unhandled exception path.",
+                "Uncaught exception (5xx response)",
+                "Server returned a 5xx error to edge-case input, indicating unhandled exception or server error.",
                 "HIGH",
                 {
                     "endpoint": tr.endpoint_url,
@@ -623,109 +716,67 @@ def analyze(
                     "snippet": body,
                 },
                 "Implement centralized exception handling and return generic error responses to clients while logging details server-side.",
-                "MEDIUM",
+                "HIGH",
             )
 
-        # CWE-209 / CWE-550: Error disclosure (stack traces / DB errors / file paths)
-        if looks_like_error_disclosure(body):
+        # 2. Significant response size change (generic behavioral indicator)
+        if significant_content_change(baseline.content_len, test_len):
+            # Different code path or error handling
+            sev = "HIGH" if sc >= 500 or sc == 0 else "MEDIUM"
             add(
-                1,
-                "Error message may disclose sensitive details",
-                "Response content appears to contain debug/stack trace/database/framework details.",
-                "HIGH",
+                21,
+                "Significant response size anomaly",
+                f"Response size changed significantly from baseline ({baseline.content_len}B -> {test_len}B). "
+                f"This indicates different code execution path or error handling for edge-case input.",
+                sev,
                 {
                     "endpoint": tr.endpoint_url,
-                    "method": tr.method,
                     "parameter": tr.parameter,
+                    "baseline_size": baseline.content_len,
+                    "test_size": test_len,
                     "category": tr.category,
                     "payload": tr.payload,
                     "status_code": tr.status_code,
-                    "snippet": body,
                 },
-                "Disable debug mode in production, use generic client-facing error pages/messages, and log detailed errors only on the server.",
+                "Ensure consistent error handling across all input validation paths. Review why this input triggers different behavior.",
                 "MEDIUM",
             )
+
+        # 3. Timing anomaly (generic)
+        if significant_timing_change(baseline.elapsed_ms, test_time):
             add(
-                19,
-                "Server-generated error message may disclose sensitive details",
-                "Server error output appears verbose and may leak implementation details.",
-                "HIGH",
+                22,
+                "Response time anomaly detected",
+                f"Response took significantly longer ({test_time}ms vs baseline {baseline.elapsed_ms}ms). "
+                f"This can indicate expensive error paths, resource strain, or algorithmic complexity issues.",
+                "MEDIUM",
                 {
                     "endpoint": tr.endpoint_url,
-                    "status_code": tr.status_code,
-                    "snippet": body,
+                    "baseline_ms": baseline.elapsed_ms,
+                    "test_ms": test_time,
+                    "category": tr.category,
+                    "payload": tr.payload,
                 },
-                "Configure the web server/app to suppress version banners and verbose error pages; ensure consistent custom error handling.",
+                "Add input validation, throttling, and ensure exceptional-condition handling is efficient and bounded.",
                 "LOW",
             )
 
-        # CWE-234: Missing parameter handling (omitted param causing 5xx)
-        if tr.category == "missing_param" and tr.payload is None:
-            if sc >= 500:
-                add(
-                    3,
-                    "Missing parameter triggers server error",
-                    "Omitting a parameter caused a 5xx response. Required parameters should be validated and handled gracefully.",
-                    "MEDIUM",
-                    {
-                        "endpoint": tr.endpoint_url,
-                        "parameter": tr.parameter,
-                        "status_code": tr.status_code,
-                        "snippet": body,
-                    },
-                    "Validate required parameters and return 400 Bad Request with a safe message instead of crashing.",
-                    "HIGH",
-                )
-
-        # CWE-235: Extra parameters (adding unexpected param causing 5xx)
-        if tr.category == "extra_param" and sc >= 500:
-            add(
-                4,
-                "Extra parameter triggers server error",
-                "Adding an unexpected parameter caused a 5xx response. Unexpected inputs should be ignored/rejected safely.",
-                "MEDIUM",
-                {
-                    "endpoint": tr.endpoint_url,
-                    "parameter": tr.parameter,
-                    "status_code": tr.status_code,
-                    "sent_params": tr.sent_params,
-                    "snippet": body,
-                },
-                "Whitelist expected parameters and reject/ignore extras; log suspicious requests for monitoring.",
-                "MEDIUM",
-            )
-
-        # CWE-369: Divide by zero (if payload '0' triggers errors or disclosure)
-        if tr.payload == "0" and (sc >= 500 or "division by zero" in body.lower()):
-            add(
-                9,
-                "Potential divide-by-zero path",
-                "A zero input appears to trigger an error condition consistent with divide-by-zero or unsafe numeric handling.",
-                "MEDIUM",
-                {
-                    "endpoint": tr.endpoint_url,
-                    "parameter": tr.parameter,
-                    "status_code": tr.status_code,
-                    "snippet": body,
-                },
-                "Validate numeric inputs; explicitly guard division operations with zero checks and safe fallbacks.",
-                "LOW",
-            )
-
-        # CWE-394: Unexpected status changes vs baseline
-        if baseline.status_code and tr.status_code and tr.status_code != baseline.status_code:
-            # only flag meaningful jumps (e.g. baseline 2xx but test 5xx; or baseline 4xx but test 2xx)
-            meaningful = (baseline.status_code < 400 <= tr.status_code) or (baseline.status_code >= 400 > tr.status_code)
+        # 4. Status code changes (generic behavioral)
+        if baseline.status_code and sc and sc != baseline.status_code:
+            # Meaningful changes: baseline 2xx but test 4xx/5xx, or vice versa
+            meaningful = (baseline.status_code < 400 <= sc) or (baseline.status_code >= 400 > sc)
             if meaningful:
+                sev = "HIGH" if sc >= 500 else "MEDIUM"
                 add(
                     12,
                     "Unexpected status code behavior",
-                    "Status code differs significantly from baseline for edge-case input, indicating different execution paths or error handling inconsistencies.",
-                    "MEDIUM" if tr.status_code >= 500 else "LOW",
+                    f"Status code changed from {baseline.status_code} to {sc} for edge-case input. "
+                    f"This indicates inconsistent error handling or different execution paths.",
+                    sev,
                     {
                         "endpoint": tr.endpoint_url,
                         "baseline_status": baseline.status_code,
-                        "test_status": tr.status_code,
+                        "test_status": sc,
                         "category": tr.category,
                         "payload": tr.payload,
                         "snippet": body,
@@ -734,42 +785,102 @@ def analyze(
                     "MEDIUM",
                 )
 
-        # CWE-636 (Failing open): baseline 401/403 but edge-case becomes 200 (very heuristic!)
-        if baseline.status_code in (401, 403) and tr.status_code == 200:
+        # 5. Missing parameter handling (generic)
+        if tr.category == "missing_param" and tr.payload is None:
+            # Behavioral: any error response (5xx, 4xx, or significant size change)
+            if sc >= 500 or significant_content_change(baseline.content_len, test_len):
+                add(
+                    3,
+                    "Missing parameter triggers error condition",
+                    f"Omitting parameter '{tr.parameter}' caused an error response or significant behavior change. "
+                    f"Required parameters should be validated gracefully.",
+                    "MEDIUM" if sc >= 500 else "LOW",
+                    {
+                        "endpoint": tr.endpoint_url,
+                        "parameter": tr.parameter,
+                        "status_code": sc,
+                        "baseline_size": baseline.content_len,
+                        "test_size": test_len,
+                    },
+                    "Validate required parameters and return 400 Bad Request with a safe message instead of crashing or exposing errors.",
+                    "HIGH",
+                )
+
+        # 6. Extra parameters (generic behavioral)
+        if tr.category == "extra_param":
+            if sc >= 500 or significant_content_change(baseline.content_len, test_len):
+                add(
+                    4,
+                    "Extra parameter triggers error condition",
+                    f"Adding unexpected parameter caused error response or behavior change. "
+                    f"Applications should safely ignore or reject unexpected inputs.",
+                    "MEDIUM" if sc >= 500 else "LOW",
+                    {
+                        "endpoint": tr.endpoint_url,
+                        "sent_params": tr.sent_params,
+                        "status_code": sc,
+                    },
+                    "Whitelist expected parameters and reject/ignore extras; log suspicious requests for monitoring.",
+                    "MEDIUM",
+                )
+
+        # 7. Divide by zero detection (generic)
+        if tr.payload == "0":
+            if sc >= 500 or "division by zero" in body.lower() or significant_content_change(baseline.content_len, test_len):
+                add(
+                    9,
+                    "Potential divide-by-zero vulnerability",
+                    f"Zero input triggered error condition consistent with divide-by-zero or unsafe numeric handling.",
+                    "MEDIUM",
+                    {
+                        "endpoint": tr.endpoint_url,
+                        "parameter": tr.parameter,
+                        "status_code": sc,
+                    },
+                    "Validate numeric inputs; explicitly guard division operations with zero checks and safe fallbacks.",
+                    "MEDIUM",
+                )
+
+        # 8. Failing open detection (generic)
+        if baseline.status_code in (401, 403) and sc == 200:
             add(
                 20,
-                "Potential failing-open behavior (heuristic)",
-                "Baseline indicates access denied (401/403) but an edge-case request returned 200. This can indicate inconsistent authorization checks.",
+                "Potential failing-open behavior",
+                f"Baseline indicates access denied ({baseline.status_code}) but edge-case request returned 200. "
+                f"This suggests inconsistent authorization checks.",
                 "HIGH",
                 {
                     "endpoint": tr.endpoint_url,
                     "baseline_status": baseline.status_code,
-                    "test_status": tr.status_code,
+                    "test_status": sc,
                     "category": tr.category,
                     "sent_params": tr.sent_params,
-                    "snippet": body,
                 },
-                "Review authorization logic to ensure it fails closed on all exceptional conditions; add tests for parameter pollution and missing/extra parameters.",
+                "Review authorization logic to ensure it fails closed on all exceptional conditions; test for parameter pollution.",
                 "LOW",
             )
 
-        # Timing anomaly (simple): +1500ms compared to baseline
-        if tr.elapsed_ms is not None and baseline.elapsed_ms and tr.elapsed_ms > baseline.elapsed_ms + 1500:
-            # Map to A10 general exceptional conditions handling
+        # BONUS: Specific error disclosure (extra signal, not required)
+        if looks_like_error_disclosure(body):
+            # This catches specific error messages as bonus detection
+            confidence = "HIGH" if sc >= 500 else "MEDIUM"
             add(
-                21,
-                "Response time anomaly under edge-case input",
-                "Edge-case input caused a much slower response than baseline, which can indicate expensive error paths or resource strain.",
-                "LOW",
+                1,
+                "Error message contains sensitive information",
+                "Response contains technical error details (stack traces, database errors, file paths, etc.) "
+                "that may aid attackers in reconnaissance.",
+                "HIGH",
                 {
                     "endpoint": tr.endpoint_url,
-                    "baseline_ms": baseline.elapsed_ms,
-                    "test_ms": tr.elapsed_ms,
+                    "method": tr.method,
+                    "parameter": tr.parameter,
                     "category": tr.category,
                     "payload": tr.payload,
+                    "status_code": sc,
+                    "snippet": body,
                 },
-                "Add throttling, input validation, and ensure exceptional-condition handling is efficient and bounded.",
-                "LOW",
+                "Disable debug mode in production. Use generic error pages for clients and log detailed errors server-side only.",
+                confidence,
             )
 
     # de-duplicate loosely (same CWE + endpoint + title)
@@ -803,6 +914,44 @@ def write_html_report(out_path: str, payload: dict) -> None:
     rows = []
     for f in findings:
         ev = f["evidence"]
+        
+        # Build evidence display - show snippet OR other relevant fields
+        evidence_html = ""
+        
+        if ev.get("snippet"):
+            # Show error message snippet if available
+            evidence_html = f'<pre>{escape(str(ev.get("snippet",""))[:400])}</pre>'
+        else:
+            # Show other evidence fields for behavioral detections
+            evidence_parts = []
+            
+            if "baseline_size" in ev and "test_size" in ev:
+                evidence_parts.append(f"<b>Size change:</b> {ev['baseline_size']}B → {ev['test_size']}B")
+            
+            if "baseline_ms" in ev and "test_ms" in ev:
+                evidence_parts.append(f"<b>Time change:</b> {ev['baseline_ms']}ms → {ev['test_ms']}ms")
+            
+            if "baseline_status" in ev and "test_status" in ev:
+                evidence_parts.append(f"<b>Status change:</b> {ev['baseline_status']} → {ev['test_status']}")
+            
+            if "status_code" in ev:
+                evidence_parts.append(f"<b>Status:</b> {ev['status_code']}")
+            
+            if "parameter" in ev:
+                evidence_parts.append(f"<b>Parameter:</b> {escape(str(ev['parameter']))}")
+            
+            if "payload" in ev and ev["payload"]:
+                payload_str = str(ev["payload"])[:50]
+                evidence_parts.append(f"<b>Payload:</b> <code>{escape(payload_str)}</code>")
+            
+            if "category" in ev:
+                evidence_parts.append(f"<b>Category:</b> {escape(str(ev['category']))}")
+            
+            if evidence_parts:
+                evidence_html = "<br>".join(evidence_parts)
+            else:
+                evidence_html = "<em>Behavioral anomaly detected</em>"
+        
         rows.append(
             f"""
             <tr>
@@ -810,7 +959,7 @@ def write_html_report(out_path: str, payload: dict) -> None:
               <td>{escape(f["cwe_id"])}</td>
               <td>{escape(f["title"])}</td>
               <td><code>{escape(str(ev.get("endpoint","")))}</code></td>
-              <td><pre>{escape(str(ev.get("snippet",""))[:400])}</pre></td>
+              <td>{evidence_html}</td>
             </tr>
             """
         )
@@ -909,10 +1058,26 @@ def run_scan(
             timeout=timeout,
         )
         if not success:
-            print(f"[!] Warning: {message}")
-            print("[!] Continuing with scan anyway...")
+            print(f"[!] Error: {message}")
+            print("[!] Authentication failed. Cannot proceed with scan.")
+            print("[!] Please check your credentials and login URL.")
+            raise ValueError(f"Login failed: {message}")
         else:
             print(f"[+] {message}")
+            
+            # Verify we can access the target URL after login
+            print(f"[+] Verifying access to target URL...")
+            test_resp, test_err, _ = safe_request(session, "GET", url, timeout=timeout)
+            if test_resp:
+                if "login" in test_resp.url.lower() and test_resp.url != url:
+                    print(f"[!] Warning: Redirected to login page. Authentication may have failed.")
+                    print(f"[!] Target URL: {url}")
+                    print(f"[!] Redirected to: {test_resp.url}")
+                    raise ValueError("Target URL redirected to login - authentication failed")
+                else:
+                    print(f"[+] Successfully accessed target URL (status: {test_resp.status_code})")
+            else:
+                print(f"[!] Warning: Could not verify target URL access: {test_err}")
     elif login_url or username or password:
         print("[!] Warning: Incomplete login credentials provided. Skipping login.")
         print("[!] All three are required: --login-url, --username, --password")
