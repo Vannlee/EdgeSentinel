@@ -110,6 +110,7 @@ class TestResult:
     elapsed_ms: Optional[int]
     content_len: Optional[int]
     body_snippet: str
+    full_body: str                  # Store full response for error detection
     error: Optional[str]
 
 
@@ -135,25 +136,87 @@ DEFAULT_UA = "EdgeSentinel/0.1 (CLI; educational; authorized testing only)"
 ERROR_KEYWORDS = [
     # stack traces / exceptions
     "traceback", "exception", "stack trace", "fatal error",
-    # common DB errors (generic patterns)
+    # common DB errors (generic patterns)  
     "sql syntax", "syntax error", "query failed", "database error",
     "you have an error", "mysql", "postgresql", "sqlite", "sqlstate",
+    "mysqli", "pdo", "odbc",  # Database drivers
+    # DVWA-specific MySQL errors
+    "check the manual that corresponds to your mysql",
+    "near", "line", "unexpected",  # Common in SQL syntax errors
     # file paths (disclosure)
     "/var/www", "/usr/local", "c:\\", "d:\\", "/home/",
     # generic error indicators
     "warning:", "fatal:", "error:", "undefined", "null reference",
     "division by zero", "cannot be null", "out of bounds",
+    # PHP errors (common in DVWA)
+    "notice:", "parse error", "call to",  
 ]
 
-SQLISH_PAYLOADS = ["' OR '1'='1", "1'--", "\" OR \"1\"=\"1", "1; DROP TABLE t--"]
-SPECIAL_CHARS = ["<>\"'`;&|", "\x00", "../" * 3 + "etc/passwd", "..\\..\\windows\\system32"]
+# SQLish payloads for detection - DESTRUCTIVE PAYLOAD COMMENTED OUT
+SQLISH_PAYLOADS = [
+    "' OR '1'='1",  # Basic SQL injection test
+    "1'--",  # SQL comment injection
+    "\" OR \"1\"=\"1",  # Double-quote SQL injection
+    # "1; DROP TABLE t--",  # DESTRUCTIVE - commented out for safety
+    "1' OR '1'='1",  # Non-destructive alternative
+]
+
+# Special characters - DESTRUCTIVE PATH TRAVERSAL COMMENTED OUT
+SPECIAL_CHARS = [
+    "<>\"'`;&|",  # Special shell/script characters
+    "\x00",  # Null byte
+    # "../" * 3 + "etc/passwd",  # DESTRUCTIVE - path traversal (Linux)
+    # "..\\..\\windows\\system32",  # DESTRUCTIVE - path traversal (Windows)
+    "../test",  # Non-destructive path traversal test
+    "..\\test",  # Non-destructive Windows path test
+]
 FORMAT_STRINGS = ["%s%s%s%s", "${7*7}", "{7*7}"]
 XSSISH = ["<script>alert(1)</script>", "<img src=x onerror=alert(1)>"]
 
-TYPE_CONFUSION = ["abc", "99999999999999999999", "-1", "0", "1.1e308"]
-SPECIAL_VALUES = ["null", "NULL", "nil", "true", "false", "[]", "{}", "A" * 5000]
+# Enhanced type confusion to trigger more error types
+TYPE_CONFUSION = [
+    "abc",                      # String where number expected
+    "99999999999999999999",     # Integer overflow
+    "-1",                       # Negative number (array index, etc.)
+    "0",                        # Zero (divide-by-zero tests)
+    "1.1e308",                  # Float overflow
+    "NaN",                      # Not a Number
+    "Infinity",                 # Infinity value
+    "-Infinity",                # Negative infinity
+    "0.0",                      # Float zero
+    "00",                       # Leading zeros
+    "0x0",                      # Hex notation
+    "2147483648",               # INT_MAX + 1 (32-bit overflow)
+    "-2147483649",              # INT_MIN - 1
+]
+
+# Enhanced special values to trigger NULL pointer, uninitialized, etc.
+SPECIAL_VALUES = [
+    "null", "NULL", "nil", "None",  # Null values
+    "undefined", "#undef",           # Undefined values
+    "true", "false", "True", "False",  # Booleans
+    "[]", "{}", "()",                # Empty structures
+    "A" * 5000,                       # Large input (buffer)
+    "A" * 10000,                      # Very large input
+    "",                               # Empty string
+    " ",                              # Whitespace only
+    "\n\r\t",                        # Control characters
+    "�",                             # Unicode replacement char
+]
+
 ENCODING = ["%3Cscript%3E", "%253Cscript%253E", "SeLeCt", "SELECT"]
 TIMING = ["sleep(2)", "WAITFOR DELAY '00:00:02'"]  # only used as "timing probe" (no exploit claims)
+
+# Additional numeric edge cases specifically for divide-by-zero and numeric errors
+NUMERIC_EDGE_CASES = [
+    "0",           # Zero
+    "0.0",         # Float zero
+    "-0",          # Negative zero
+    "00",          # Zero with leading zero
+    "0x0",         # Hex zero
+    "1/0",         # Division expression
+    "0/0",         # Undefined division
+]
 
 
 def now_stamp() -> str:
@@ -172,7 +235,8 @@ def same_host(a: str, b: str) -> bool:
     return urlparse(a).netloc.lower() == urlparse(b).netloc.lower()
 
 
-def clip(text: str, max_len: int = 350) -> str:
+def clip(text: str, max_len: int = 800) -> str:
+    """Clip text for display. Increased from 350 to 800 to capture more error content."""
     text = text or ""
     text = re.sub(r"\s+", " ", text).strip()
     return text[:max_len] + ("..." if len(text) > max_len else "")
@@ -349,13 +413,30 @@ def crawl(
     delay_s: float,
     timeout: int,
     same_host_only: bool = True,
+    stay_in_path: bool = True,
 ) -> List[str]:
     """
     Simple BFS crawl over <a href> links.
+    
+    Args:
+        stay_in_path: If True, only crawl URLs within the same base path as start_url.
+                     E.g., if start_url is http://example.com/dvwa/page.php,
+                     only crawl URLs starting with http://example.com/dvwa/
     """
     seen: Set[str] = set()
     queue: List[Tuple[str, int]] = [(start_url, 0)]
     out: List[str] = []
+    
+    # Extract base path from start URL for path filtering
+    start_parsed = urlparse(start_url)
+    base_path = '/'.join(start_parsed.path.rstrip('/').split('/')[:-1]) + '/' if '/' in start_parsed.path else '/'
+    # For /dvwa/vulnerabilities/sqli/ -> /dvwa/
+    # Extract the top-level application path
+    path_parts = [p for p in start_parsed.path.split('/') if p]
+    if path_parts:
+        base_path = '/' + path_parts[0] + '/'
+    else:
+        base_path = '/'
 
     while queue and len(out) < max_pages:
         url, depth = queue.pop(0)
@@ -365,6 +446,12 @@ def crawl(
 
         if same_host_only and not same_host(start_url, url):
             continue
+        
+        # Check if URL is within the same base path (e.g., stay in /dvwa/)
+        if stay_in_path:
+            url_parsed = urlparse(url)
+            if not url_parsed.path.startswith(base_path):
+                continue
 
         resp, err, _ = safe_request(session, "GET", url, timeout=timeout)
         time.sleep(delay_s)
@@ -390,6 +477,13 @@ def crawl(
                 continue
             if same_host_only and not same_host(start_url, nxt):
                 continue
+            
+            # Check if link stays within base path
+            if stay_in_path:
+                nxt_parsed = urlparse(nxt)
+                if not nxt_parsed.path.startswith(base_path):
+                    continue
+            
             if nxt not in seen:
                 queue.append((nxt, depth + 1))
 
@@ -417,6 +511,30 @@ def extract_endpoints_from_page(page_url: str, html: str) -> List[Endpoint]:
                     context=f"link: {clip(a.get_text() or href, 60)}",
                 )
             )
+    
+    # Detect common API paths (as per proposal: "links, forms and common API paths")
+    # Look for common API endpoint patterns in links
+    api_patterns = ['/api/', '/v1/', '/v2/', '/v3/', '/rest/', '/graphql', '/json', '/xml']
+    for a in soup.find_all("a", href=True):
+        href = a.get("href")
+        abs_url = urljoin(page_url, href)
+        if not is_http_url(abs_url):
+            continue
+        # Check if URL contains API patterns and doesn't already have query params
+        if any(pattern in abs_url.lower() for pattern in api_patterns):
+            # Treat path segments as potential parameters for testing
+            parsed = urlparse(abs_url)
+            path_parts = [p for p in parsed.path.split('/') if p and not any(pat.strip('/') in p for pat in api_patterns)]
+            if path_parts:
+                endpoints.append(
+                    Endpoint(
+                        kind="api",
+                        url=abs_url,
+                        method="GET",
+                        params=[],  # API paths tested differently (will trigger missing param tests)
+                        context=f"api: {clip(abs_url, 60)}",
+                    )
+                )
 
     # Forms
     for form in soup.find_all("form"):
@@ -486,12 +604,13 @@ def generate_payloads() -> Dict[str, List[Optional[str]]]:
     """
     return {
         "error_disclosure": SQLISH_PAYLOADS + SPECIAL_CHARS + FORMAT_STRINGS + XSSISH,
-        "missing_param": [None, "", "   "],
-        "extra_param": ["admin=true", "debug=true"],
+        "missing_param": [None, "", "   ", "\x00"],  # Enhanced: include null byte
+        "extra_param": ["admin=true", "debug=true", "role=admin", "priv=1"],  # Privilege-related
         "type_confusion": TYPE_CONFUSION,
         "special_values": SPECIAL_VALUES,
         "encoding": ENCODING,
         "timing": TIMING,
+        "numeric_edge": NUMERIC_EDGE_CASES,  # New category for numeric errors
     }
 
 
@@ -592,6 +711,7 @@ def execute_tests_for_endpoint(
                             elapsed_ms=elapsed,
                             content_len=None,
                             body_snippet="",
+                            full_body="",
                             error=err,
                         )
                     )
@@ -609,6 +729,7 @@ def execute_tests_for_endpoint(
                         elapsed_ms=elapsed,
                         content_len=len(resp.content or b""),
                         body_snippet=clip(resp.text),
+                        full_body=resp.text or "",  # Store full response
                         error=None,
                     )
                 )
@@ -624,21 +745,23 @@ def looks_like_error_disclosure(text: str) -> bool:
     return any(k in t for k in ERROR_KEYWORDS)
 
 
-def significant_content_change(baseline_len: int, test_len: int, threshold: float = 0.3) -> bool:
+def significant_content_change(baseline_len: int, test_len: int, threshold: float = 0.15) -> bool:
     """
-    Detects if response size changed significantly (±30% by default).
+    Detects if response size changed significantly (±15% by default, lowered from 30%).
     Indicates different code path or error handling.
+    Lower threshold catches more subtle anomalies.
     """
     if baseline_len == 0:
-        return test_len > 100  # any substantial response when baseline was empty
+        return test_len > 50  # any substantial response when baseline was empty (lowered from 100)
     
     ratio = abs(test_len - baseline_len) / baseline_len
     return ratio > threshold
 
 
-def significant_timing_change(baseline_ms: int, test_ms: int, threshold_ms: int = 1500) -> bool:
+def significant_timing_change(baseline_ms: int, test_ms: int, threshold_ms: int = 800) -> bool:
     """
     Detects significant slowdown suggesting expensive error handling or resource issues.
+    Lowered from 1500ms to 800ms to catch more anomalies.
     """
     return test_ms > baseline_ms + threshold_ms
 
@@ -693,6 +816,7 @@ def analyze(
     for tr in tests:
         # Skip if request outright failed (still useful, but keep it lower signal)
         body = tr.body_snippet or ""
+        full_body = tr.full_body or ""  # Use full body for error detection
         sc = tr.status_code or 0
         test_len = tr.content_len or 0
         test_time = tr.elapsed_ms or 0
@@ -824,9 +948,11 @@ def analyze(
                     "MEDIUM",
                 )
 
-        # 7. Divide by zero detection (generic)
-        if tr.payload == "0":
-            if sc >= 500 or "division by zero" in body.lower() or significant_content_change(baseline.content_len, test_len):
+        # 7. Divide by zero detection (enhanced - check multiple zero representations)
+        zero_variants = ["0", "0.0", "-0", "00", "0x0"]
+        if tr.payload in zero_variants or (tr.category == "numeric_edge" and tr.payload in NUMERIC_EDGE_CASES):
+            # Search full body for division errors
+            if sc >= 500 or "division by zero" in full_body.lower() or "divide by zero" in full_body.lower() or significant_content_change(baseline.content_len, test_len):
                 add(
                     9,
                     "Potential divide-by-zero vulnerability",
@@ -860,8 +986,189 @@ def analyze(
                 "LOW",
             )
 
-        # BONUS: Specific error disclosure (extra signal, not required)
-        if looks_like_error_disclosure(body):
+        # Additional CWE detections for better A10 coverage
+        
+        # CWE-476: NULL Pointer Dereference detection
+        null_indicators = ["null", "NULL", "nil", "None", "undefined"]
+        if tr.payload in null_indicators or (isinstance(tr.payload, str) and any(n in tr.payload.lower() for n in null_indicators)):
+            null_errors = ["null pointer", "nullpointer", "null reference", "object reference not set", "cannot be null"]
+            # Search full body, not just snippet
+            if sc >= 500 or any(err in full_body.lower() for err in null_errors) or significant_content_change(baseline.content_len, test_len):
+                add(
+                    16,
+                    "Null pointer dereference indication",
+                    f"Null-like input '{tr.payload}' triggered error behavior suggesting improper null handling.",
+                    "HIGH" if sc >= 500 else "MEDIUM",
+                    {
+                        "endpoint": tr.endpoint_url,
+                        "parameter": tr.parameter,
+                        "payload": tr.payload,
+                        "status_code": sc,
+                        "snippet": body if any(err in body.lower() for err in null_errors) else None,
+                    },
+                    "Add null checks before dereferencing objects; use safe navigation operators or default values.",
+                    "HIGH" if any(err in body.lower() for err in null_errors) else "MEDIUM",
+                )
+        
+        # CWE-252: Unchecked Return Value (detect when errors aren't properly propagated)
+        if baseline.status_code == 200 and sc == 200 and significant_content_change(baseline.content_len, test_len, threshold=0.1):
+            # Subtle changes with same status suggest silent failures
+            add(
+                6,
+                "Potential unchecked return value",
+                f"Edge-case input caused subtle response changes without status code change, suggesting error condition not properly checked/propagated.",
+                "LOW",
+                {
+                    "endpoint": tr.endpoint_url,
+                    "parameter": tr.parameter,
+                    "baseline_status": baseline.status_code,
+                    "test_status": sc,
+                    "baseline_size": baseline.content_len,
+                    "test_size": test_len,
+                    "category": tr.category,
+                },
+                "Check return values from all operations; propagate errors appropriately rather than silently failing.",
+                "LOW",
+            )
+        
+        # CWE-755: Improper Handling of Exceptional Conditions (catch-all for unusual responses)
+        if tr.category in ["type_confusion", "special_values"] and sc not in [200, 400, 404]:
+            # Unusual status codes for type/value confusion suggest poor exception handling
+            add(
+                23,
+                "Improper handling of exceptional input conditions",
+                f"Type confusion or special value input resulted in unusual status code {sc}, indicating inadequate exception handling.",
+                "MEDIUM",
+                {
+                    "endpoint": tr.endpoint_url,
+                    "parameter": tr.parameter,
+                    "category": tr.category,
+                    "payload": tr.payload,
+                    "status_code": sc,
+                },
+                "Implement comprehensive input validation and exception handling for all data types and edge cases.",
+                "MEDIUM",
+            )
+        
+        # CWE-274/280: Privilege/Permission handling issues (extra params with privilege keywords)
+        priv_keywords = ["admin", "role", "priv", "permission", "auth", "user"]
+        if tr.category == "extra_param" and any(kw in tr.sent_params.keys() for kw in priv_keywords):
+            if sc == 200 and baseline.status_code in [401, 403]:
+                add(
+                    7,
+                    "Insufficient privilege handling",
+                    f"Adding privilege-related parameter bypassed authorization (baseline {baseline.status_code} -> {sc}).",
+                    "HIGH",
+                    {
+                        "endpoint": tr.endpoint_url,
+                        "sent_params": tr.sent_params,
+                        "baseline_status": baseline.status_code,
+                        "test_status": sc,
+                    },
+                    "Implement proper authorization checks; whitelist parameters and reject unexpected privilege escalation attempts.",
+                    "MEDIUM",
+                )
+            elif significant_content_change(baseline.content_len, test_len):
+                add(
+                    8,
+                    "Improper permission parameter handling",
+                    f"Privilege-related extra parameter caused behavioral change, suggesting improper permission handling.",
+                    "MEDIUM",
+                    {
+                        "endpoint": tr.endpoint_url,
+                        "sent_params": tr.sent_params,
+                        "baseline_size": baseline.content_len,
+                        "test_size": test_len,
+                    },
+                    "Validate and sanitize all parameters; ignore unexpected permission/privilege parameters.",
+                    "LOW",
+                )
+        
+        # CWE-756: Missing Custom Error Page (detect default error pages)
+        default_error_indicators = [
+            "apache", "nginx", "iis", "tomcat",  # Server names
+            "404 not found", "500 internal server error", "403 forbidden",  # Default messages
+            "<hr>", "<address>",  # Default HTML error page elements
+        ]
+        if sc >= 400 and any(indicator in body.lower() for indicator in default_error_indicators):
+            add(
+                24,
+                "Default/generic error page detected",
+                f"Server returned default error page with technical details (status {sc}), rather than custom user-friendly page.",
+                "LOW",
+                {
+                    "endpoint": tr.endpoint_url,
+                    "status_code": sc,
+                    "snippet": body,
+                },
+                "Implement custom error pages for all error conditions; suppress technical details from default server pages.",
+                "MEDIUM" if sc >= 500 else "LOW",
+            )
+        
+        # CWE-390/391: Error Detection Without Action / Unchecked Error Condition
+        # Look for error keywords in 200 responses (errors being displayed but not handled)
+        error_in_success = [
+            "error:", "warning:", "exception", "failed", "could not", "unable to",
+            "not found" if sc == 200 else None,  # "not found" in 200 response suggests unhandled error
+        ]
+        error_in_success = [e for e in error_in_success if e]  # Remove None
+        
+        if sc == 200 and any(err in body.lower() for err in error_in_success):
+            add(
+                10,
+                "Error condition without proper action",
+                f"Error message appears in successful response (200), suggesting error detected but not properly handled.",
+                "MEDIUM",
+                {
+                    "endpoint": tr.endpoint_url,
+                    "status_code": sc,
+                    "parameter": tr.parameter,
+                    "snippet": body,
+                },
+                "Return appropriate error status codes; handle errors properly instead of embedding error messages in successful responses.",
+                "MEDIUM",
+            )
+            
+            # Also flag as CWE-391 (unchecked error condition)
+            add(
+                11,
+                "Unchecked error condition",
+                f"Error condition appears to be unchecked (error text in 200 response), allowing execution to continue despite failure.",
+                "MEDIUM",
+                {
+                    "endpoint": tr.endpoint_url,
+                    "status_code": sc,
+                    "parameter": tr.parameter,
+                    "snippet": body,
+                },
+                "Check all error conditions; halt execution or use safe fallbacks rather than continuing with error state.",
+                "LOW",
+            )
+        
+        # CWE-550: Server-generated error with sensitive info (more specific than CWE-209)
+        server_sensitive = ["sql", "database", "mysql", "postgresql", "stack trace", "traceback", 
+                           "/var/", "/usr/", "c:\\", "line ", ".php:", ".py:", ".java:"]
+        # Search full body, and accept any status code (not just 5xx) since DVWA returns 200
+        if any(sensitive in full_body.lower() for sensitive in server_sensitive):
+            add(
+                19,
+                "Server error message containing sensitive information",
+                f"Response contains technical implementation details (SQL queries, database errors, paths, stack traces).",
+                "HIGH" if sc >= 500 else "HIGH",  # HIGH regardless of status for sensitive data disclosure
+                {
+                    "endpoint": tr.endpoint_url,
+                    "status_code": sc,
+                    "parameter": tr.parameter,
+                    "payload": tr.payload,
+                    "snippet": body,
+                },
+                "Configure server to suppress technical details in error responses; use custom error handlers.",
+                "HIGH",
+            )
+        
+        # BONUS: CWE-209 - Specific error disclosure (extra signal, not required)
+        # Search FULL body, not just snippet - this is critical for catching errors
+        if looks_like_error_disclosure(full_body):
             # This catches specific error messages as bonus detection
             confidence = "HIGH" if sc >= 500 else "MEDIUM"
             add(
@@ -882,6 +1189,50 @@ def analyze(
                 "Disable debug mode in production. Use generic error pages for clients and log detailed errors server-side only.",
                 confidence,
             )
+        
+        # 9. Rate limiting / throttling detection (as per proposal)
+        # Status 429 (Too Many Requests) indicates rate limiting is present
+        if sc == 429:
+            add(
+                21,
+                "Rate limiting detected (positive security control)",
+                "Endpoint implements rate limiting (HTTP 429), which helps prevent resource exhaustion and DoS. "
+                "This is a positive finding indicating proper exceptional condition prevention.",
+                "LOW",  # This is actually good security practice
+                {
+                    "endpoint": tr.endpoint_url,
+                    "status_code": sc,
+                    "category": tr.category,
+                    "payload": tr.payload,
+                },
+                "Ensure rate limiting is consistently applied across all endpoints and returns appropriate retry-after headers.",
+                "HIGH",
+            )
+        
+        # Missing rate limiting on resource-intensive operations
+        # If timing is excessively high but no rate limiting detected, flag it
+        if test_time > 5000 and sc == 200:  # >5 seconds but still processing
+            # Check if we've seen 429s for this endpoint before (would indicate rate limiting exists)
+            has_rate_limit = any(
+                t.endpoint_url == tr.endpoint_url and t.status_code == 429 
+                for t in tests
+            )
+            if not has_rate_limit:
+                add(
+                    22,
+                    "Potential resource exhaustion risk (no rate limiting detected)",
+                    f"Endpoint took {test_time}ms to respond to edge-case input without returning rate limit errors. "
+                    f"This may indicate missing throttling controls, allowing resource exhaustion attacks.",
+                    "MEDIUM",
+                    {
+                        "endpoint": tr.endpoint_url,
+                        "test_ms": test_time,
+                        "payload": tr.payload,
+                        "category": tr.category,
+                    },
+                    "Implement rate limiting, request throttling and timeout controls to prevent resource exhaustion under exceptional conditions.",
+                    "MEDIUM",
+                )
 
     # de-duplicate loosely (same CWE + endpoint + title)
     uniq = {}
@@ -1034,6 +1385,7 @@ def run_scan(
     out_format: str,
     user_agent: str,
     no_crawl: bool,
+    allow_external_paths: bool,
     target_param: Optional[str],
     login_url: Optional[str] = None,
     username: Optional[str] = None,
@@ -1086,6 +1438,13 @@ def run_scan(
     print(f"[*] Target: {url}")
     print(f"[*] Mode: {mode}")
     print(f"[*] Crawl: {'OFF' if no_crawl else f'depth={depth}, max_pages={max_pages}'}")
+    if not no_crawl and not allow_external_paths:
+        # Show user that path filtering is active
+        start_parsed = urlparse(url)
+        path_parts = [p for p in start_parsed.path.split('/') if p]
+        if path_parts:
+            base_path = '/' + path_parts[0] + '/'
+            print(f"[*] Path filter: Only crawling URLs starting with {base_path}")
     print(f"[*] Delay: {delay_s}s | Timeout: {timeout}s")
 
     # Crawl pages
@@ -1101,6 +1460,7 @@ def run_scan(
             delay_s=delay_s,
             timeout=timeout,
             same_host_only=True,
+            stay_in_path=not allow_external_paths,  # Stay in path by default (True), unless --allow-external-paths
         )
         if url not in pages:
             pages.insert(0, url)
@@ -1110,7 +1470,26 @@ def run_scan(
     # Discover endpoints
     print("[+] Discovering endpoints (links + forms)...")
     endpoints = discover_endpoints(session, pages, delay_s=delay_s, timeout=timeout)
-    print(f"[+] Endpoints found: {len(endpoints)}")
+    
+    # If --no-crawl is used, filter to only test endpoints on the target page itself
+    # (exclude navigation links to other pages)
+    if no_crawl:
+        target_parsed = urlparse(url)
+        target_base = f"{target_parsed.scheme}://{target_parsed.netloc}{target_parsed.path}"
+        
+        filtered_endpoints = []
+        for ep in endpoints:
+            ep_parsed = urlparse(ep.url)
+            ep_base = f"{ep_parsed.scheme}://{ep_parsed.netloc}{ep_parsed.path}"
+            
+            # Keep endpoints that match the target base URL (same path)
+            if ep_base.rstrip('/') == target_base.rstrip('/'):
+                filtered_endpoints.append(ep)
+        
+        print(f"[+] Endpoints found: {len(endpoints)} (filtered to {len(filtered_endpoints)} on target page)")
+        endpoints = filtered_endpoints
+    else:
+        print(f"[+] Endpoints found: {len(endpoints)}")
 
     # Generate payloads & execute tests
     payloads = generate_payloads()
@@ -1150,6 +1529,13 @@ def run_scan(
     json_path = f"{outdir}/edgesentinel_report_{safe_host}_{ts}.json"
     html_path = f"{outdir}/edgesentinel_report_{safe_host}_{ts}.html"
 
+    # Convert test results to dict but exclude full_body to reduce JSON size
+    test_results_for_json = []
+    for r in all_test_results:
+        r_dict = asdict(r)
+        r_dict.pop("full_body", None)  # Remove full_body from JSON export
+        test_results_for_json.append(r_dict)
+    
     report = {
         "meta": {
             "target_url": url,
@@ -1163,7 +1549,7 @@ def run_scan(
             "notes": "For authorized testing only. Heuristic findings; validate manually.",
         },
         "endpoints": [asdict(e) for e in endpoints],
-        "test_results": [asdict(r) for r in all_test_results],
+        "test_results": test_results_for_json,
         "findings": [asdict(f) for f in all_findings],
     }
 
@@ -1201,8 +1587,23 @@ def parse_cwe_list(spec: str) -> Set[int]:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="EdgeSentinel is a command line focused detection tool that helps "
-                    "testers and developers identify OWASP A10 relevant weaknesses from a target URL",
+        description="EdgeSentinel - OWASP A10:2025 Focused Detection Tool\n\n"
+                    "A lightweight scanner that helps testers and developers quickly surface \n"
+                    "A10: Mishandling of Exceptional Conditions vulnerabilities from a target URL.\n\n"
+                    "Performs bounded crawling, executes curated edge-case test suites, and generates\n"
+                    "reports identifying A10-relevant weaknesses mapped to specific CWEs.\n\n"
+                    "Features:\n"
+                    "  - Bounded crawling (configurable depth/page limits)\n"
+                    "  - Endpoint discovery (links, forms, common API paths)\n"
+                    "  - Edge-case testing (missing/extra params, type confusion, etc.)\n"
+                    "  - Behavioral analysis (status codes, response sizes, timing)\n"
+                    "  - CSRF-aware authentication support\n"
+                    "  - Structured reporting with remediation guidance\n\n"
+                    "Scan Modes:\n"
+                    "  Normal:   All 24 CWEs (default)\n"
+                    "  Quick:    First 12 CWEs only (-q)\n"
+                    "  Specific: Selected CWEs only (-s 1,3,5)\n\n"
+                    "For authorized testing only. Non-destructive payloads.",
         formatter_class=RawTextHelpFormatter,
     )
 
@@ -1223,6 +1624,9 @@ def main():
     parser.add_argument("--depth", type=int, default=1, help="Crawl depth (default: 1)")
     parser.add_argument("--max-pages", type=int, default=10, help="Max pages to crawl (default: 10)")
     parser.add_argument("--no-crawl", action="store_true", help="Disable crawling; scan only the given URL")
+    parser.add_argument("--allow-external-paths", action="store_true", 
+                       help="Allow crawling outside the base path (e.g., allow /docs/ when starting from /dvwa/). "
+                            "By default, crawler stays within the same path prefix to avoid wandering to documentation or unrelated sections.")
 
     # Request controls (be gentle / avoid accidental DoS)
     parser.add_argument("--delay", type=float, default=0.3, help="Delay between requests in seconds (default: 0.3)")
@@ -1271,6 +1675,7 @@ def main():
         out_format=args.format,
         user_agent=args.user_agent,
         no_crawl=args.no_crawl,
+        allow_external_paths=args.allow_external_paths,
         target_param=args.param,
         login_url=args.login_url,
         username=args.username,
