@@ -1,0 +1,28 @@
+[Unit]
+Description=VulnLab - Deliberately Vulnerable Web Application for Testing
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/vulnlab
+Environment="PATH=/var/www/vulnlab/venv/bin"
+ExecStart=/var/www/vulnlab/venv/bin/python3 /var/www/vulnlab/vulnlab.py
+
+# Restart on failure
+Restart=on-failure
+RestartSec=5s
+
+# Security settings (minimal since this is deliberately vulnerable)
+# Do NOT expose to untrusted networks
+PrivateTmp=true
+NoNewPrivileges=true
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=vulnlab
+
+[Install]
+WantedBy=multi-user.target

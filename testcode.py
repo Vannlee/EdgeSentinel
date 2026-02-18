@@ -149,7 +149,10 @@ ERROR_KEYWORDS = [
     "warning:", "fatal:", "error:", "undefined", "null reference",
     "division by zero", "cannot be null", "out of bounds",
     # PHP errors (common in DVWA)
-    "notice:", "parse error", "call to",  
+    "notice:", "parse error", "call to",
+    # Debug information exposure (CWE-215)
+    "phpinfo", "php version", "xdebug", "display_errors", "error_reporting",
+    "debug mode", "development mode", "var_dump", "print_r", "debug_backtrace",
 ]
 
 # SQLish payloads for detection - DESTRUCTIVE PAYLOAD COMMENTED OUT
@@ -192,14 +195,17 @@ TYPE_CONFUSION = [
 
 # Enhanced special values to trigger NULL pointer, uninitialized, etc.
 SPECIAL_VALUES = [
-    "null", "NULL", "nil", "None",  # Null values
+    "",                               # Empty string (actual null/missing value)
+    " ",                              # Whitespace only
+    "null", "NULL", "nil", "None",  # String null representations
     "undefined", "#undef",           # Undefined values
     "true", "false", "True", "False",  # Booleans
     "[]", "{}", "()",                # Empty structures
+    "0",                              # Zero (invalid ID for NULL pointer tests)
+    "-1",                             # Negative (invalid ID)
+    "999999999",                      # Non-existent ID (triggers NULL when object not found)
     "A" * 5000,                       # Large input (buffer)
     "A" * 10000,                      # Very large input
-    "",                               # Empty string
-    " ",                              # Whitespace only
     "\n\r\t",                        # Control characters
     "�",                             # Unicode replacement char
 ]
@@ -595,6 +601,126 @@ def discover_endpoints(
 
 
 # -----------------------------
+# Debug endpoint detection (CWE-215)
+# -----------------------------
+def check_debug_endpoints(
+    session: requests.Session,
+    base_url: str,
+    timeout: int,
+    delay_s: float,
+) -> List[Finding]:
+    """
+    Probe for common debug/info endpoints that expose sensitive information.
+    Returns findings for CWE-215 (Debug Information Insertion).
+    """
+    findings: List[Finding] = []
+    parsed = urlparse(base_url)
+    base = f"{parsed.scheme}://{parsed.netloc}"
+    
+    # Extract base path (e.g., /dvwa/ from /dvwa/vulnerabilities/)
+    path_parts = [p for p in parsed.path.split('/') if p]
+    if path_parts:
+        app_base = '/' + path_parts[0] + '/'
+    else:
+        app_base = '/'
+    
+    # Common debug endpoints
+    DEBUG_PATHS = [
+        '/phpinfo.php',
+        '/info.php',
+        '/test.php',
+        '/debug.php',
+        '/debug',
+        '/test',
+        '/.env',
+        '/config.php',
+        '/configuration.php',
+    ]
+    
+    # Also check in app base path
+    paths_to_check = DEBUG_PATHS.copy()
+    if app_base != '/':
+        paths_to_check.extend([app_base + p.lstrip('/') for p in DEBUG_PATHS])
+    
+    for path in paths_to_check:
+        url = base + path
+        resp, err, _ = safe_request(session, "GET", url, timeout=timeout)
+        time.sleep(delay_s)
+        
+        if err or resp is None:
+            continue
+        
+        if resp.status_code == 200:
+            body = resp.text or ""
+            
+            # Check for phpinfo signature
+            if 'phpinfo()' in body or 'PHP Version' in body or 'PHP Credits' in body:
+                findings.append(
+                    Finding(
+                        cwe_num=2,
+                        cwe_id="CWE-215",
+                        cwe_name="Insertion of Sensitive Information Into Debugging Code",
+                        severity="HIGH",
+                        title=f"phpinfo() endpoint exposed: {path}",
+                        description=f"The endpoint {path} exposes phpinfo() output, revealing detailed PHP configuration, "
+                                  f"loaded modules, environment variables, and system paths.",
+                        evidence={
+                            "url": url,
+                            "status_code": resp.status_code,
+                            "snippet": clip(body, 400),
+                        },
+                        recommendation="Remove phpinfo() and other debug endpoints from production. "
+                                     "If needed for diagnostics, protect with authentication and IP whitelisting.",
+                        confidence="HIGH",
+                    )
+                )
+            
+            # Check for debug mode indicators
+            debug_indicators = ['debug mode', 'development mode', 'error_reporting', 'display_errors']
+            if any(indicator in body.lower() for indicator in debug_indicators):
+                findings.append(
+                    Finding(
+                        cwe_num=2,
+                        cwe_id="CWE-215",
+                        cwe_name="Insertion of Sensitive Information Into Debugging Code",
+                        severity="MEDIUM",
+                        title=f"Debug endpoint accessible: {path}",
+                        description=f"The endpoint {path} is accessible and contains debug information.",
+                        evidence={
+                            "url": url,
+                            "status_code": resp.status_code,
+                            "snippet": clip(body, 400),
+                        },
+                        recommendation="Remove debug endpoints or protect them with proper access controls.",
+                        confidence="MEDIUM",
+                    )
+                )
+            
+            # Check for .env file exposure
+            if '.env' in path and ('DB_PASSWORD' in body or 'API_KEY' in body or 'SECRET' in body):
+                findings.append(
+                    Finding(
+                        cwe_num=2,
+                        cwe_id="CWE-215",
+                        cwe_name="Insertion of Sensitive Information Into Debugging Code",
+                        severity="CRITICAL",
+                        title=f"Environment file exposed: {path}",
+                        description=f"The .env file is publicly accessible, exposing credentials and secrets.",
+                        evidence={
+                            "url": url,
+                            "status_code": resp.status_code,
+                            "snippet": clip(body, 400),
+                        },
+                        recommendation="Immediately remove .env file from web-accessible directories. "
+                                     "Store environment variables securely outside document root.",
+                        confidence="HIGH",
+                    )
+                )
+    
+    return findings
+
+
+# -----------------------------
 # Payload generation
 # -----------------------------
 def generate_payloads() -> Dict[str, List[Optional[str]]]:
@@ -823,10 +949,10 @@ def analyze(
 
         # BEHAVIORAL DETECTION (generic, works across all apps)
         
-        # 1. Status code 5xx = server error (generic)
+        # 1. Status code 5xx = server error (CWE-248: Uncaught Exception)
         if sc >= 500:
             add(
-                5,
+                5,  # Maps to CWE-248 in CWE_LIST
                 "Uncaught exception (5xx response)",
                 "Server returned a 5xx error to edge-case input, indicating unhandled exception or server error.",
                 "HIGH",
@@ -844,27 +970,35 @@ def analyze(
             )
 
         # 2. Significant response size change (generic behavioral indicator)
+        # Only flag if BOTH responses are successful (200) but different sizes
+        # Don't flag size changes when status code changes to error (expected behavior)
         if significant_content_change(baseline.content_len, test_len):
-            # Different code path or error handling
-            sev = "HIGH" if sc >= 500 or sc == 0 else "MEDIUM"
-            add(
-                21,
-                "Significant response size anomaly",
-                f"Response size changed significantly from baseline ({baseline.content_len}B -> {test_len}B). "
-                f"This indicates different code execution path or error handling for edge-case input.",
-                sev,
-                {
-                    "endpoint": tr.endpoint_url,
-                    "parameter": tr.parameter,
-                    "baseline_size": baseline.content_len,
-                    "test_size": test_len,
-                    "category": tr.category,
-                    "payload": tr.payload,
-                    "status_code": tr.status_code,
-                },
-                "Ensure consistent error handling across all input validation paths. Review why this input triggers different behavior.",
-                "MEDIUM",
-            )
+            # Skip if status changed from 2xx to 4xx/5xx (error pages are naturally smaller)
+            baseline_success = baseline.status_code and 200 <= baseline.status_code < 300
+            test_success = sc and 200 <= sc < 300
+            
+            # Only flag if both successful or both errors with size change
+            if baseline_success == test_success:
+                # Different code path or error handling
+                sev = "HIGH" if sc >= 500 or sc == 0 else "MEDIUM"
+                add(
+                    21,
+                    "Significant response size anomaly",
+                    f"Response size changed significantly from baseline ({baseline.content_len}B -> {test_len}B). "
+                    f"This indicates different code execution path or error handling for edge-case input.",
+                    sev,
+                    {
+                        "endpoint": tr.endpoint_url,
+                        "parameter": tr.parameter,
+                        "baseline_size": baseline.content_len,
+                        "test_size": test_len,
+                        "category": tr.category,
+                        "payload": tr.payload,
+                        "status_code": tr.status_code,
+                    },
+                    "Ensure consistent error handling across all input validation paths. Review why this input triggers different behavior.",
+                    "MEDIUM",
+                )
 
         # 3. Timing anomaly (generic)
         if significant_timing_change(baseline.elapsed_ms, test_time):
@@ -888,8 +1022,11 @@ def analyze(
         # 4. Status code changes (generic behavioral)
         if baseline.status_code and sc and sc != baseline.status_code:
             # Meaningful changes: baseline 2xx but test 4xx/5xx, or vice versa
+            # Exclude correct HTTP protocol responses (413, 414, 431)
             meaningful = (baseline.status_code < 400 <= sc) or (baseline.status_code >= 400 > sc)
-            if meaningful:
+            correct_http_errors = sc in [413, 414, 431]  # Correct responses to oversized inputs
+            
+            if meaningful and not correct_http_errors:
                 sev = "HIGH" if sc >= 500 else "MEDIUM"
                 add(
                     12,
@@ -989,9 +1126,22 @@ def analyze(
         # Additional CWE detections for better A10 coverage
         
         # CWE-476: NULL Pointer Dereference detection
-        null_indicators = ["null", "NULL", "nil", "None", "undefined"]
-        if tr.payload in null_indicators or (isinstance(tr.payload, str) and any(n in tr.payload.lower() for n in null_indicators)):
-            null_errors = ["null pointer", "nullpointer", "null reference", "object reference not set", "cannot be null"]
+        # Check for empty values, invalid IDs, and null-like inputs
+        null_indicators = ["", "null", "NULL", "nil", "None", "undefined", "0", "-1", "999999999"]
+        if tr.payload in null_indicators or (isinstance(tr.payload, str) and tr.payload.strip() == ""):
+            # Enhanced NULL error patterns for better detection
+            null_errors = [
+                "null pointer", "nullpointer", "null reference", 
+                "object reference not set", "cannot be null",
+                "undefined index", "undefined offset", "undefined variable",
+                "trying to get property", "trying to access array offset",  # PHP 7.4+
+                "undefined array key",  # PHP 8.0+
+                "does not exist", "not found in database",
+                "null value in column", "violates not-null constraint",  # Database
+                "cannot read property", "cannot read properties of null",  # JavaScript
+                "nonetype", "nonetype object",  # Python
+                "attempt to invoke", "on a null object reference",  # Java
+            ]
             # Search full body, not just snippet
             if sc >= 500 or any(err in full_body.lower() for err in null_errors) or significant_content_change(baseline.content_len, test_len):
                 add(
@@ -1031,8 +1181,40 @@ def analyze(
                 "LOW",
             )
         
+        # CWE-754: Improper Check for Unusual or Exceptional Conditions
+        # Only flag actual application errors, not correct HTTP protocol responses
+        # Note: 413/414/431 are CORRECT responses for oversized inputs, not vulnerabilities
+        unusual_conditions = [
+            (sc == 400 and tr.category == "type_confusion", "Type confusion"),
+            (sc == 400 and tr.category == "encoding", "Encoding issue"),
+            # APPLICATION errors that should have been validated before reaching the server
+            (sc == 500 and tr.category in ["type_confusion", "encoding", "special_values"], "Unhandled input condition"),
+        ]
+        
+        for condition, desc in unusual_conditions:
+            if condition:
+                add(
+                    22,  # CWE-754
+                    f"Improper check for unusual condition: {desc}",
+                    f"Application failed to properly handle unusual input condition ({desc}), "
+                    f"returning error status {sc} instead of graceful validation.",
+                    "MEDIUM",
+                    {
+                        "endpoint": tr.endpoint_url,
+                        "parameter": tr.parameter,
+                        "category": tr.category,
+                        "payload": str(tr.payload)[:100] if tr.payload else None,
+                        "status_code": sc,
+                        "condition_type": desc,
+                    },
+                    "Implement proper input validation for boundary conditions, size limits, and unusual inputs. "
+                    "Return 400 Bad Request with safe error messages instead of allowing server errors.",
+                    "MEDIUM",
+                )
+                break  # Only report once per test
+        
         # CWE-755: Improper Handling of Exceptional Conditions (catch-all for unusual responses)
-        if tr.category in ["type_confusion", "special_values"] and sc not in [200, 400, 404]:
+        if tr.category in ["type_confusion", "special_values"] and sc not in [200, 400, 404, 413, 414, 431]:
             # Unusual status codes for type/value confusion suggest poor exception handling
             add(
                 23,
@@ -1085,12 +1267,16 @@ def analyze(
                 )
         
         # CWE-756: Missing Custom Error Page (detect default error pages)
+        # Only flag APPLICATION errors (5xx), not standard HTTP protocol errors (413, 414, 431)
         default_error_indicators = [
             "apache", "nginx", "iis", "tomcat",  # Server names
-            "404 not found", "500 internal server error", "403 forbidden",  # Default messages
+            "500 internal server error", "502 bad gateway", "503 service unavailable",
             "<hr>", "<address>",  # Default HTML error page elements
         ]
-        if sc >= 400 and any(indicator in body.lower() for indicator in default_error_indicators):
+        # Exclude correct HTTP protocol responses: 413, 414, 431
+        is_application_error = sc >= 500 or (sc >= 400 and sc not in [413, 414, 431])
+        
+        if is_application_error and any(indicator in body.lower() for indicator in default_error_indicators):
             add(
                 24,
                 "Default/generic error page detected",
@@ -1146,8 +1332,14 @@ def analyze(
             )
         
         # CWE-550: Server-generated error with sensitive info (more specific than CWE-209)
-        server_sensitive = ["sql", "database", "mysql", "postgresql", "stack trace", "traceback", 
-                           "/var/", "/usr/", "c:\\", "line ", ".php:", ".py:", ".java:"]
+        # Use more specific patterns to avoid false positives on normal HTML
+        server_sensitive = [
+            "sql syntax error", "mysql error", "mysqli_", "postgresql error", "pg_query",
+            "stack trace:", "traceback (most recent", "call stack:",
+            "/var/www/", "/usr/local/", "c:\\\\windows\\\\", "c:\\\\inetpub\\\\",  # Actual path disclosures
+            " on line ", "error in ", "exception in ",  # Error location patterns
+            "fatal error:", "uncaught exception"
+        ]
         # Search full body, and accept any status code (not just 5xx) since DVWA returns 200
         if any(sensitive in full_body.lower() for sensitive in server_sensitive):
             add(
@@ -1166,7 +1358,7 @@ def analyze(
                 "HIGH",
             )
         
-        # BONUS: CWE-209 - Specific error disclosure (extra signal, not required)
+        # CWE-209 - Specific error disclosure (extra signal, not required)
         # Search FULL body, not just snippet - this is critical for catching errors
         if looks_like_error_disclosure(full_body):
             # This catches specific error messages as bonus detection
@@ -1188,6 +1380,27 @@ def analyze(
                 },
                 "Disable debug mode in production. Use generic error pages for clients and log detailed errors server-side only.",
                 confidence,
+            )
+        
+        # CWE-215: Debug information exposure detection
+        debug_indicators = ["phpinfo", "php version", "xdebug", "display_errors", "error_reporting",
+                           "debug mode", "development mode", "var_dump", "print_r"]
+        if any(indicator in full_body.lower() for indicator in debug_indicators):
+            add(
+                2,
+                "Debug information exposure detected",
+                "Response contains debug information (phpinfo, error_reporting settings, debug mode indicators) "
+                "that reveals internal application details.",
+                "MEDIUM",
+                {
+                    "endpoint": tr.endpoint_url,
+                    "parameter": tr.parameter,
+                    "payload": tr.payload,
+                    "status_code": sc,
+                    "snippet": body,
+                },
+                "Disable debug mode and verbose error reporting in production environments. Remove phpinfo() and debug endpoints.",
+                "HIGH",
             )
         
         # 9. Rate limiting / throttling detection (as per proposal)
@@ -1241,8 +1454,8 @@ def analyze(
         uniq[key] = f
     findings = list(uniq.values())
 
-    # sort by severity
-    order = {"HIGH": 0, "MEDIUM": 1, "LOW": 2}
+    # sort by severity (CRITICAL > HIGH > MEDIUM > LOW)
+    order = {"CRITICAL": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3}
     findings.sort(key=lambda x: order.get(x.severity, 9))
     return findings
 
@@ -1326,6 +1539,7 @@ def write_html_report(out_path: str, payload: dict) -> None:
     table {{ border-collapse: collapse; width: 100%; }}
     th, td {{ border: 1px solid #ddd; padding: 8px; vertical-align: top; }}
     th {{ background: #f6f6f6; text-align: left; }}
+    .critical {{ color: #8b0000; font-weight: bold; background-color: #ffe0e0; }}
     .high {{ color: #b00020; font-weight: bold; }}
     .medium {{ color: #b26a00; font-weight: bold; }}
     .low {{ color: #1b5e20; font-weight: bold; }}
@@ -1491,10 +1705,23 @@ def run_scan(
     else:
         print(f"[+] Endpoints found: {len(endpoints)}")
 
+    # Check for debug endpoints (CWE-215)
+    print("[+] Checking for debug endpoints...")
+    debug_findings = check_debug_endpoints(
+        session=session,
+        base_url=url,
+        timeout=timeout,
+        delay_s=delay_s,
+    )
+    
+    # Display debug findings immediately
+    for f in debug_findings:
+        print(f"[!] {f.severity} - {f.cwe_id}: {f.title}")
+
     # Generate payloads & execute tests
     payloads = generate_payloads()
     all_test_results: List[TestResult] = []
-    all_findings: List[Finding] = []
+    all_findings: List[Finding] = debug_findings  # Start with debug findings
 
     for idx, ep in enumerate(endpoints, 1):
         print(f"[*] ({idx}/{len(endpoints)}) Baseline: {ep.method} {ep.url} [{', '.join(ep.params[:6])}{'...' if len(ep.params)>6 else ''}]")
