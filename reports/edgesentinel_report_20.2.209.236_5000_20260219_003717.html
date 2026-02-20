@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>EdgeSentinel Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; }
+    .card { border: 1px solid #ddd; border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+    th { background: #f6f6f6; text-align: left; }
+    .critical { color: #8b0000; font-weight: bold; background-color: #ffe0e0; }
+    .high { color: #b00020; font-weight: bold; }
+    .medium { color: #b26a00; font-weight: bold; }
+    .low { color: #1b5e20; font-weight: bold; }
+    pre { white-space: pre-wrap; word-break: break-word; }
+  </style>
+</head>
+<body>
+  <h1>EdgeSentinel Report</h1>
+
+  <div class="card">
+    <h3>Scan Metadata</h3>
+    <p><b>Target:</b> http://20.2.209.236:5000</p>
+    <p><b>Timestamp:</b> 20260219_003717</p>
+    <p><b>Mode:</b> normal</p>
+    <p><b>Pages crawled:</b> 1 | <b>Endpoints found:</b> 8</p>
+    <p><b>Total tests:</b> 345 | <b>Findings:</b> 6</p>
+  </div>
+
+  <h2>Findings</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Severity</th>
+        <th>CWE</th>
+        <th>Title</th>
+        <th>Endpoint</th>
+        <th>Evidence (snippet)</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+            <tr>
+              <td>HIGH</td>
+              <td>CWE-394</td>
+              <td>Unexpected status code behavior</td>
+              <td><code>http://20.2.209.236:5000/api/stats?type=summary</code></td>
+              <td><pre>&lt;!doctype html&gt; &lt;html lang=en&gt; &lt;title&gt;500 Internal Server Error&lt;/title&gt; &lt;h1&gt;Internal Server Error&lt;/h1&gt; &lt;p&gt;The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.&lt;/p&gt;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>HIGH</td>
+              <td>CWE-248</td>
+              <td>Uncaught exception (5xx response)</td>
+              <td><code>http://20.2.209.236:5000/api/stats?type=summary</code></td>
+              <td><pre>&lt;!doctype html&gt; &lt;html lang=en&gt; &lt;title&gt;500 Internal Server Error&lt;/title&gt; &lt;h1&gt;Internal Server Error&lt;/h1&gt; &lt;p&gt;The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.&lt;/p&gt;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>HIGH</td>
+              <td>CWE-550</td>
+              <td>Server error message containing sensitive information</td>
+              <td><code>http://20.2.209.236:5000/api/stats?type=summary</code></td>
+              <td><pre>&lt;!doctype html&gt; &lt;html lang=en&gt; &lt;title&gt;500 Internal Server Error&lt;/title&gt; &lt;h1&gt;Internal Server Error&lt;/h1&gt; &lt;p&gt;The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.&lt;/p&gt;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-235</td>
+              <td>Extra parameter triggers error condition</td>
+              <td><code>http://20.2.209.236:5000/api/stats?type=summary</code></td>
+              <td><b>Status:</b> 500</td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-280</td>
+              <td>Improper permission parameter handling</td>
+              <td><code>http://20.2.209.236:5000/api/stats?type=summary</code></td>
+              <td><b>Size change:</b> 60B → 40B</td>
+            </tr>
+            
+            <tr>
+              <td>LOW</td>
+              <td>CWE-756</td>
+              <td>Default/generic error page detected</td>
+              <td><code>http://20.2.209.236:5000/api/stats?type=summary</code></td>
+              <td><pre>&lt;!doctype html&gt; &lt;html lang=en&gt; &lt;title&gt;500 Internal Server Error&lt;/title&gt; &lt;h1&gt;Internal Server Error&lt;/h1&gt; &lt;p&gt;The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.&lt;/p&gt;</pre></td>
+            </tr>
+            
+    </tbody>
+  </table>
+
+  <p style="margin-top:16px; color:#666;">
+    Note: This is a lightweight edge-case scanner. Findings are heuristic and should be validated manually.
+  </p>
+</body>
+</html>
