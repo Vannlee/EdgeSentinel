@@ -1,0 +1,444 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>EdgeSentinel Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; }
+    .card { border: 1px solid #ddd; border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+    th { background: #f6f6f6; text-align: left; }
+    .critical { color: #8b0000; font-weight: bold; background-color: #ffe0e0; }
+    .high { color: #b00020; font-weight: bold; }
+    .medium { color: #b26a00; font-weight: bold; }
+    .low { color: #1b5e20; font-weight: bold; }
+    pre { white-space: pre-wrap; word-break: break-word; }
+  </style>
+</head>
+<body>
+  <h1>EdgeSentinel Report</h1>
+
+  <div class="card">
+    <h3>Scan Metadata</h3>
+    <p><b>Target:</b> http://20.2.209.236:5000</p>
+    <p><b>Timestamp:</b> 20260219_005003</p>
+    <p><b>Mode:</b> normal</p>
+    <p><b>Pages crawled:</b> 1 | <b>Endpoints found:</b> 5</p>
+    <p><b>Total tests:</b> 345 | <b>Findings:</b> 49</p>
+  </div>
+
+  <h2>Findings</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Severity</th>
+        <th>CWE</th>
+        <th>Title</th>
+        <th>Endpoint</th>
+        <th>Evidence (snippet)</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+            <tr>
+              <td>HIGH</td>
+              <td>CWE-476</td>
+              <td>Null pointer dereference indication</td>
+              <td><code>http://20.2.209.236:5000/api/calc</code></td>
+              <td><b>Status:</b> 500<br><b>Parameter:</b> divisor<br><b>Payload:</b> <code>0</code></td>
+            </tr>
+            
+            <tr>
+              <td>HIGH</td>
+              <td>CWE-248</td>
+              <td>Uncaught exception (5xx response)</td>
+              <td><code>http://20.2.209.236:5000/api/calc</code></td>
+              <td><pre>&lt;!doctype html&gt; &lt;html lang=en&gt; &lt;title&gt;500 Internal Server Error&lt;/title&gt; &lt;h1&gt;Internal Server Error&lt;/h1&gt; &lt;p&gt;The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.&lt;/p&gt;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>HIGH</td>
+              <td>CWE-703</td>
+              <td>Significant response size anomaly</td>
+              <td><code>http://20.2.209.236:5000/api/calc</code></td>
+              <td><b>Size change:</b> 39B → 265B<br><b>Status:</b> 500<br><b>Parameter:</b> divisor<br><b>Payload:</b> <code>00</code><br><b>Category:</b> numeric_edge</td>
+            </tr>
+            
+            <tr>
+              <td>HIGH</td>
+              <td>CWE-550</td>
+              <td>Server error message containing sensitive information</td>
+              <td><code>http://20.2.209.236:5000/api/calc</code></td>
+              <td><pre>&lt;!doctype html&gt; &lt;html lang=en&gt; &lt;title&gt;500 Internal Server Error&lt;/title&gt; &lt;h1&gt;Internal Server Error&lt;/h1&gt; &lt;p&gt;The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.&lt;/p&gt;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-394</td>
+              <td>Unexpected status code behavior</td>
+              <td><code>http://20.2.209.236:5000/api/calc</code></td>
+              <td><pre>{&quot;divisor&quot;:999999999.0,&quot;numerator&quot;:100,&quot;result&quot;:1.000000001e-07}</pre></td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-754</td>
+              <td>Improper check for unusual condition: Type confusion</td>
+              <td><code>http://20.2.209.236:5000/api/calc</code></td>
+              <td><b>Status:</b> 400<br><b>Parameter:</b> divisor<br><b>Payload:</b> <code>0x0</code><br><b>Category:</b> type_confusion</td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-369</td>
+              <td>Potential divide-by-zero vulnerability</td>
+              <td><code>http://20.2.209.236:5000/api/calc</code></td>
+              <td><b>Status:</b> 500<br><b>Parameter:</b> divisor</td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-754</td>
+              <td>Improper check for unusual condition: Unhandled input condition</td>
+              <td><code>http://20.2.209.236:5000/api/calc</code></td>
+              <td><b>Status:</b> 500<br><b>Parameter:</b> divisor<br><b>Payload:</b> <code>0</code><br><b>Category:</b> special_values</td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-755</td>
+              <td>Improper handling of exceptional input conditions</td>
+              <td><code>http://20.2.209.236:5000/api/calc</code></td>
+              <td><b>Status:</b> 500<br><b>Parameter:</b> divisor<br><b>Payload:</b> <code>0</code><br><b>Category:</b> special_values</td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-754</td>
+              <td>Improper check for unusual condition: Encoding issue</td>
+              <td><code>http://20.2.209.236:5000/api/calc</code></td>
+              <td><b>Status:</b> 400<br><b>Parameter:</b> divisor<br><b>Payload:</b> <code>SELECT</code><br><b>Category:</b> encoding</td>
+            </tr>
+            
+            <tr>
+              <td>LOW</td>
+              <td>CWE-234</td>
+              <td>Missing parameter triggers error condition</td>
+              <td><code>http://20.2.209.236:5000/api/calc</code></td>
+              <td><b>Size change:</b> 39B → 46B<br><b>Status:</b> 200<br><b>Parameter:</b> divisor</td>
+            </tr>
+            
+            <tr>
+              <td>LOW</td>
+              <td>CWE-756</td>
+              <td>Default/generic error page detected</td>
+              <td><code>http://20.2.209.236:5000/api/calc</code></td>
+              <td><pre>&lt;!doctype html&gt; &lt;html lang=en&gt; &lt;title&gt;500 Internal Server Error&lt;/title&gt; &lt;h1&gt;Internal Server Error&lt;/h1&gt; &lt;p&gt;The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.&lt;/p&gt;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>HIGH</td>
+              <td>CWE-248</td>
+              <td>Uncaught exception (5xx response)</td>
+              <td><code>http://20.2.209.236:5000/api/user</code></td>
+              <td><pre>&lt;!doctype html&gt; &lt;html lang=en&gt; &lt;title&gt;500 Internal Server Error&lt;/title&gt; &lt;h1&gt;Internal Server Error&lt;/h1&gt; &lt;p&gt;The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.&lt;/p&gt;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>HIGH</td>
+              <td>CWE-703</td>
+              <td>Significant response size anomaly</td>
+              <td><code>http://20.2.209.236:5000/api/user</code></td>
+              <td><b>Size change:</b> 41B → 265B<br><b>Status:</b> 500<br><b>Parameter:</b> id<br><b>Payload:</b> <code>00</code><br><b>Category:</b> numeric_edge</td>
+            </tr>
+            
+            <tr>
+              <td>HIGH</td>
+              <td>CWE-550</td>
+              <td>Server error message containing sensitive information</td>
+              <td><code>http://20.2.209.236:5000/api/user</code></td>
+              <td><pre>&lt;!doctype html&gt; &lt;html lang=en&gt; &lt;title&gt;500 Internal Server Error&lt;/title&gt; &lt;h1&gt;Internal Server Error&lt;/h1&gt; &lt;p&gt;The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.&lt;/p&gt;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>HIGH</td>
+              <td>CWE-476</td>
+              <td>Null pointer dereference indication</td>
+              <td><code>http://20.2.209.236:5000/api/user</code></td>
+              <td><b>Status:</b> 500<br><b>Parameter:</b> id<br><b>Payload:</b> <code>0</code></td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-394</td>
+              <td>Unexpected status code behavior</td>
+              <td><code>http://20.2.209.236:5000/api/user</code></td>
+              <td><pre>{&quot;id&quot;:&quot;1&quot;,&quot;name&quot;:&quot;Alice&quot;,&quot;role&quot;:&quot;user&quot;}</pre></td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-754</td>
+              <td>Improper check for unusual condition: Type confusion</td>
+              <td><code>http://20.2.209.236:5000/api/user</code></td>
+              <td><b>Status:</b> 400<br><b>Parameter:</b> id<br><b>Payload:</b> <code>0x0</code><br><b>Category:</b> type_confusion</td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-754</td>
+              <td>Improper check for unusual condition: Unhandled input condition</td>
+              <td><code>http://20.2.209.236:5000/api/user</code></td>
+              <td><b>Status:</b> 500<br><b>Parameter:</b> id<br><b>Payload:</b> <code>999999999</code><br><b>Category:</b> special_values</td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-755</td>
+              <td>Improper handling of exceptional input conditions</td>
+              <td><code>http://20.2.209.236:5000/api/user</code></td>
+              <td><b>Status:</b> 500<br><b>Parameter:</b> id<br><b>Payload:</b> <code>999999999</code><br><b>Category:</b> special_values</td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-369</td>
+              <td>Potential divide-by-zero vulnerability</td>
+              <td><code>http://20.2.209.236:5000/api/user</code></td>
+              <td><b>Status:</b> 500<br><b>Parameter:</b> id</td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-754</td>
+              <td>Improper check for unusual condition: Encoding issue</td>
+              <td><code>http://20.2.209.236:5000/api/user</code></td>
+              <td><b>Status:</b> 400<br><b>Parameter:</b> id<br><b>Payload:</b> <code>SELECT</code><br><b>Category:</b> encoding</td>
+            </tr>
+            
+            <tr>
+              <td>LOW</td>
+              <td>CWE-756</td>
+              <td>Default/generic error page detected</td>
+              <td><code>http://20.2.209.236:5000/api/user</code></td>
+              <td><pre>&lt;!doctype html&gt; &lt;html lang=en&gt; &lt;title&gt;500 Internal Server Error&lt;/title&gt; &lt;h1&gt;Internal Server Error&lt;/h1&gt; &lt;p&gt;The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.&lt;/p&gt;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>HIGH</td>
+              <td>CWE-703</td>
+              <td>Significant response size anomaly</td>
+              <td><code>http://20.2.209.236:5000/api/stats</code></td>
+              <td><b>Size change:</b> 25B → 265B<br><b>Status:</b> 500<br><b>Parameter:</b> type<br><b>Payload:</b> <code>debug=true</code><br><b>Category:</b> extra_param</td>
+            </tr>
+            
+            <tr>
+              <td>HIGH</td>
+              <td>CWE-248</td>
+              <td>Uncaught exception (5xx response)</td>
+              <td><code>http://20.2.209.236:5000/api/stats</code></td>
+              <td><pre>&lt;!doctype html&gt; &lt;html lang=en&gt; &lt;title&gt;500 Internal Server Error&lt;/title&gt; &lt;h1&gt;Internal Server Error&lt;/h1&gt; &lt;p&gt;The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.&lt;/p&gt;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>HIGH</td>
+              <td>CWE-550</td>
+              <td>Server error message containing sensitive information</td>
+              <td><code>http://20.2.209.236:5000/api/stats</code></td>
+              <td><pre>&lt;!doctype html&gt; &lt;html lang=en&gt; &lt;title&gt;500 Internal Server Error&lt;/title&gt; &lt;h1&gt;Internal Server Error&lt;/h1&gt; &lt;p&gt;The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.&lt;/p&gt;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-394</td>
+              <td>Unexpected status code behavior</td>
+              <td><code>http://20.2.209.236:5000/api/stats</code></td>
+              <td><pre>{&quot;timestamp&quot;:&quot;2026-02-19&quot;,&quot;total_users&quot;:2,&quot;type&quot;:&quot;summary&quot;}</pre></td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-235</td>
+              <td>Extra parameter triggers error condition</td>
+              <td><code>http://20.2.209.236:5000/api/stats</code></td>
+              <td><b>Status:</b> 500</td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-280</td>
+              <td>Improper permission parameter handling</td>
+              <td><code>http://20.2.209.236:5000/api/stats</code></td>
+              <td><b>Size change:</b> 25B → 40B</td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-754</td>
+              <td>Improper check for unusual condition: Type confusion</td>
+              <td><code>http://20.2.209.236:5000/api/stats</code></td>
+              <td><b>Status:</b> 400<br><b>Parameter:</b> type<br><b>Payload:</b> <code>-2147483649</code><br><b>Category:</b> type_confusion</td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-754</td>
+              <td>Improper check for unusual condition: Encoding issue</td>
+              <td><code>http://20.2.209.236:5000/api/stats</code></td>
+              <td><b>Status:</b> 400<br><b>Parameter:</b> type<br><b>Payload:</b> <code>SELECT</code><br><b>Category:</b> encoding</td>
+            </tr>
+            
+            <tr>
+              <td>LOW</td>
+              <td>CWE-234</td>
+              <td>Missing parameter triggers error condition</td>
+              <td><code>http://20.2.209.236:5000/api/stats</code></td>
+              <td><b>Size change:</b> 25B → 60B<br><b>Status:</b> 200<br><b>Parameter:</b> type</td>
+            </tr>
+            
+            <tr>
+              <td>LOW</td>
+              <td>CWE-756</td>
+              <td>Default/generic error page detected</td>
+              <td><code>http://20.2.209.236:5000/api/stats</code></td>
+              <td><pre>&lt;!doctype html&gt; &lt;html lang=en&gt; &lt;title&gt;500 Internal Server Error&lt;/title&gt; &lt;h1&gt;Internal Server Error&lt;/h1&gt; &lt;p&gt;The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.&lt;/p&gt;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>HIGH</td>
+              <td>CWE-636</td>
+              <td>Potential failing-open behavior</td>
+              <td><code>http://20.2.209.236:5000/admin/config</code></td>
+              <td><b>Status change:</b> 403 → 200<br><b>Category:</b> special_values</td>
+            </tr>
+            
+            <tr>
+              <td>HIGH</td>
+              <td>CWE-274</td>
+              <td>Insufficient privilege handling</td>
+              <td><code>http://20.2.209.236:5000/admin/config</code></td>
+              <td><b>Status change:</b> 403 → 200</td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-394</td>
+              <td>Unexpected status code behavior</td>
+              <td><code>http://20.2.209.236:5000/admin/config</code></td>
+              <td><pre>{&quot;config&quot;:{&quot;api_key&quot;:&quot;sk-abc123xyz&quot;,&quot;db_password&quot;:&quot;SuperSecret123!&quot;,&quot;debug_mode&quot;:true}}</pre></td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-476</td>
+              <td>Null pointer dereference indication</td>
+              <td><code>http://20.2.209.236:5000/admin/config</code></td>
+              <td><b>Status:</b> 200<br><b>Parameter:</b> role<br><b>Payload:</b> <code>
+	</code></td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-755</td>
+              <td>Improper handling of exceptional input conditions</td>
+              <td><code>http://20.2.209.236:5000/admin/config</code></td>
+              <td><b>Status:</b> 403<br><b>Parameter:</b> role<br><b>Payload:</b> <code>�</code><br><b>Category:</b> special_values</td>
+            </tr>
+            
+            <tr>
+              <td>LOW</td>
+              <td>CWE-234</td>
+              <td>Missing parameter triggers error condition</td>
+              <td><code>http://20.2.209.236:5000/admin/config</code></td>
+              <td><b>Size change:</b> 47B → 88B<br><b>Status:</b> 200<br><b>Parameter:</b> role</td>
+            </tr>
+            
+            <tr>
+              <td>LOW</td>
+              <td>CWE-235</td>
+              <td>Extra parameter triggers error condition</td>
+              <td><code>http://20.2.209.236:5000/admin/config</code></td>
+              <td><b>Status:</b> 200</td>
+            </tr>
+            
+            <tr>
+              <td>HIGH</td>
+              <td>CWE-248</td>
+              <td>Uncaught exception (5xx response)</td>
+              <td><code>http://20.2.209.236:5000/api/process</code></td>
+              <td><pre>&lt;!doctype html&gt; &lt;html lang=en&gt; &lt;title&gt;500 Internal Server Error&lt;/title&gt; &lt;h1&gt;Internal Server Error&lt;/h1&gt; &lt;p&gt;The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.&lt;/p&gt;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>HIGH</td>
+              <td>CWE-394</td>
+              <td>Unexpected status code behavior</td>
+              <td><code>http://20.2.209.236:5000/api/process</code></td>
+              <td><pre>&lt;!doctype html&gt; &lt;html lang=en&gt; &lt;title&gt;500 Internal Server Error&lt;/title&gt; &lt;h1&gt;Internal Server Error&lt;/h1&gt; &lt;p&gt;The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.&lt;/p&gt;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>HIGH</td>
+              <td>CWE-550</td>
+              <td>Server error message containing sensitive information</td>
+              <td><code>http://20.2.209.236:5000/api/process</code></td>
+              <td><pre>&lt;!doctype html&gt; &lt;html lang=en&gt; &lt;title&gt;500 Internal Server Error&lt;/title&gt; &lt;h1&gt;Internal Server Error&lt;/h1&gt; &lt;p&gt;The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.&lt;/p&gt;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>HIGH</td>
+              <td>CWE-209</td>
+              <td>Error message contains sensitive information</td>
+              <td><code>http://20.2.209.236:5000/api/process</code></td>
+              <td><pre>{&quot;length&quot;:9,&quot;processed&quot;:&quot;undefined&quot;,&quot;status&quot;:&quot;success&quot;}</pre></td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-703</td>
+              <td>Significant response size anomaly</td>
+              <td><code>http://20.2.209.236:5000/api/process</code></td>
+              <td><b>Size change:</b> 51B → 72B<br><b>Status:</b> 200<br><b>Parameter:</b> value<br><b>Payload:</b> <code>WAITFOR DELAY &#x27;00:00:02&#x27;</code><br><b>Category:</b> timing</td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-754</td>
+              <td>Improper check for unusual condition: Unhandled input condition</td>
+              <td><code>http://20.2.209.236:5000/api/process</code></td>
+              <td><b>Status:</b> 500<br><b>Parameter:</b> value<br><b>Payload:</b> <code>�</code><br><b>Category:</b> special_values</td>
+            </tr>
+            
+            <tr>
+              <td>MEDIUM</td>
+              <td>CWE-755</td>
+              <td>Improper handling of exceptional input conditions</td>
+              <td><code>http://20.2.209.236:5000/api/process</code></td>
+              <td><b>Status:</b> 500<br><b>Parameter:</b> value<br><b>Payload:</b> <code>�</code><br><b>Category:</b> special_values</td>
+            </tr>
+            
+            <tr>
+              <td>LOW</td>
+              <td>CWE-252</td>
+              <td>Potential unchecked return value</td>
+              <td><code>http://20.2.209.236:5000/api/process</code></td>
+              <td><b>Size change:</b> 51B → 72B<br><b>Status change:</b> 200 → 200<br><b>Parameter:</b> value<br><b>Category:</b> timing</td>
+            </tr>
+            
+            <tr>
+              <td>LOW</td>
+              <td>CWE-756</td>
+              <td>Default/generic error page detected</td>
+              <td><code>http://20.2.209.236:5000/api/process</code></td>
+              <td><pre>&lt;!doctype html&gt; &lt;html lang=en&gt; &lt;title&gt;500 Internal Server Error&lt;/title&gt; &lt;h1&gt;Internal Server Error&lt;/h1&gt; &lt;p&gt;The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.&lt;/p&gt;</pre></td>
+            </tr>
+            
+    </tbody>
+  </table>
+
+  <p style="margin-top:16px; color:#666;">
+    Note: This is a lightweight edge-case scanner. Findings are heuristic and should be validated manually.
+  </p>
+</body>
+</html>
