@@ -1,0 +1,13 @@
+# SQL Injection (better for CWE-9 divide-by-zero, CWE-550)
+py testcode.py http://20.2.209.236/dvwa/vulnerabilities/sqli/ --login-url "http://20.2.209.236/dvwa/login.php" --username "admin" --password "password"
+
+# XSS (better for CWE-248, CWE-755)
+py testcode.py http://20.2.209.236/dvwa/vulnerabilities/xss_r/ --login-url "http://20.2.209.236/dvwa/login.php" --username "admin" --password "password" --no-crawl
+
+# Upload (better for CWE-476, CWE-248)
+py testcode.py http://20.2.209.236/dvwa/vulnerabilities/upload/ --login-url "http://20.2.209.236/dvwa/login.php" --username "admin" --password "password"
+
+py testcode.py http://20.2.209.236/dvwa/vulnerabilities/ --login-url "http://20.2.209.236/dvwa/login.php" --username "admin" --password "password" --max-pages 10
+
+# VulnLab scan (new 11 CWEs)
+py testcode.py http://20.2.209.236:5000 --depth 2
