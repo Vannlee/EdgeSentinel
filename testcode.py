@@ -1100,8 +1100,7 @@ def check_debug_endpoints(
                             "status_code": resp.status_code,
                             "snippet": clip(body, 400),
                         },
-                        recommendation="Remove phpinfo() and other debug endpoints from production. "
-                                     "If needed for diagnostics, protect with authentication and IP whitelisting.",
+                        recommendation=CWE_RECOMMENDATIONS.get("CWE-215", {}).get("summary") or "Remove phpinfo() and other debug endpoints from production. If needed for diagnostics, protect with authentication and IP whitelisting.",
                         confidence="HIGH",
                     )
                 )
@@ -1122,7 +1121,7 @@ def check_debug_endpoints(
                             "status_code": resp.status_code,
                             "snippet": clip(body, 400),
                         },
-                        recommendation="Remove debug endpoints or protect them with proper access controls.",
+                        recommendation=CWE_RECOMMENDATIONS.get("CWE-215", {}).get("summary") or "Remove debug endpoints or protect them with proper access controls.",
                         confidence="MEDIUM",
                     )
                 )
@@ -1142,8 +1141,7 @@ def check_debug_endpoints(
                             "status_code": resp.status_code,
                             "snippet": clip(body, 400),
                         },
-                        recommendation="Immediately remove .env file from web-accessible directories. "
-                                     "Store environment variables securely outside document root.",
+                        recommendation=CWE_RECOMMENDATIONS.get("CWE-215", {}).get("summary") or "Immediately remove .env file from web-accessible directories. Store environment variables securely outside document root.",
                         confidence="HIGH",
                     )
                 )
@@ -1356,6 +1354,8 @@ def analyze(
         if cwe_num not in enabled_cwe_nums:
             return
         cwe_id, cwe_name = CWE_LIST[cwe_num]
+        # Use CWE_RECOMMENDATIONS summary as single source of truth so JSON and HTML stay in sync
+        rec_synced = CWE_RECOMMENDATIONS.get(cwe_id, {}).get("summary") or rec
         findings.append(
             Finding(
                 cwe_num=cwe_num,
@@ -1365,7 +1365,7 @@ def analyze(
                 title=title,
                 description=desc,
                 evidence=evidence,
-                recommendation=rec,
+                recommendation=rec_synced,
                 confidence=conf,
             )
         )
@@ -2271,6 +2271,24 @@ def run_scan(
         r_dict.pop("full_body", None)  # Remove full_body from JSON export
         test_results_for_json.append(r_dict)
     
+    # Build untested CWEs for JSON (same data as HTML section)
+    _SAST_ONLY = [
+        {"cwe_id": "CWE-396", "cwe_name": "Declaration of Catch for Generic Exception"},
+        {"cwe_id": "CWE-397", "cwe_name": "Declaration of Throws for Generic Exception"},
+        {"cwe_id": "CWE-460", "cwe_name": "Improper Cleanup on Thrown Exception"},
+        {"cwe_id": "CWE-478", "cwe_name": "Missing Default Case in Multiple Condition Expression"},
+        {"cwe_id": "CWE-484", "cwe_name": "Omitted Break Statement in Switch"},
+    ]
+    untested_cwes_for_json = [
+        {
+            "cwe_id": s["cwe_id"],
+            "cwe_name": s["cwe_name"],
+            "detection": "SAST only, not detectable by DAST",
+            "recommendation": CWE_RECOMMENDATIONS.get(s["cwe_id"], {}).get("summary", ""),
+        }
+        for s in _SAST_ONLY
+    ]
+
     report = {
         "meta": {
             "target_url": url,
@@ -2286,6 +2304,7 @@ def run_scan(
         "endpoints": [asdict(e) for e in endpoints],
         "test_results": test_results_for_json,
         "findings": [asdict(f) for f in all_findings],
+        "untested_cwes": untested_cwes_for_json,
     }
 
     # Write outputs
