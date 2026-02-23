@@ -27,7 +27,6 @@ EdgeSentinel (CLI only)
 #python edgesentinel.py https://example.com --param q
 
 from __future__ import annotations
-
 import argparse
 from argparse import RawTextHelpFormatter
 from dataclasses import dataclass, asdict
@@ -38,14 +37,10 @@ import re
 import time
 from typing import Dict, List, Optional, Tuple, Set
 from urllib.parse import urljoin, urlparse, parse_qs, urlencode, urlunparse
-
 import requests
 from bs4 import BeautifulSoup
 
-
-# -----------------------------
-# CWE mapping (your numbering)
-# -----------------------------
+# CWE mapping
 CWE_LIST = {
     1: ("CWE-209", "Generation of Error Message Containing Sensitive Information"),
     2: ("CWE-215", "Insertion of Sensitive Information Into Debugging Code"),
@@ -508,9 +503,7 @@ def internal_error(e):
 }
 
 
-# -----------------------------
 # Data models
-# -----------------------------
 @dataclass
 class Endpoint:
     kind: str                 # "link" | "form"
@@ -558,9 +551,7 @@ class Finding:
     confidence: str               # LOW/MEDIUM/HIGH
 
 
-# -----------------------------
 # Safety & config
-# -----------------------------
 DEFAULT_UA = "EdgeSentinel/0.1 (CLI; educational; authorized testing only)"
 
 # Generic error patterns (optional - used as additional signal)
@@ -2342,15 +2333,19 @@ def parse_cwe_list(spec: str) -> Set[int]:
 def main():
     parser = argparse.ArgumentParser(
         description="EdgeSentinel - OWASP A10:2025 Focused Detection Tool\n\n"
-                    "A lightweight scanner that helps testers and developers quickly surface \n"
-                    "A10: Mishandling of Exceptional Conditions vulnerabilities from a target URL.\n\n"
-                    "Performs bounded crawling, executes curated edge-case test suites, and generates\n"
-                    "reports identifying A10-relevant weaknesses mapped to specific CWEs.\n\n"
+                    "A lightweight scanner that helps testers and developers "
+                    "quickly surface A10: Mishandling of Exceptional "
+                    "Conditions vulnerabilities from a target URL.\n\n"
+                    "Performs bounded crawling, executes curated edge-case "
+                    "test suites, and generates reports identifying "
+                    "A10-relevant weaknesses mapped to specific CWEs.\n\n"
                     "Features:\n"
                     "  - Bounded crawling (configurable depth/page limits)\n"
                     "  - Endpoint discovery (links, forms, common API paths)\n"
-                    "  - Edge-case testing (missing/extra params, type confusion, etc.)\n"
-                    "  - Behavioral analysis (status codes, response sizes, timing)\n"
+                    "  - Edge-case testing (missing/extra params, type "
+                    "confusion, etc.)\n"
+                    "  - Behavioral analysis (status codes, response sizes, "
+                    "timing)\n"
                     "  - CSRF-aware authentication support\n"
                     "  - Structured reporting with remediation guidance\n\n"
                     "Scan Modes:\n"
@@ -2361,8 +2356,10 @@ def main():
         formatter_class=RawTextHelpFormatter,
     )
 
-    parser.add_argument("url", help="Target URL to scan")
+    parser.add_argument("url", help="Target URL to scan "
+                        "(e.g. http://example.com)")
 
+    # Scan mode arguments 
     mode_group = parser.add_mutually_exclusive_group(required=False)
     mode_group.add_argument(
         "-q", "--quick_scan",
@@ -2374,32 +2371,99 @@ def main():
         help="Specify CWEs by number separated by commas (e.g. 1,3,5)."
     )
 
-    # Crawl bounds (baseline deliverable calls out bounded crawling)
-    parser.add_argument("--depth", type=int, default=1, help="Crawl depth (default: 1)")
-    parser.add_argument("--max-pages", type=int, default=10, help="Max pages to crawl (default: 10)")
-    parser.add_argument("--no-crawl", action="store_true", help="Disable crawling; scan only the given URL")
-    parser.add_argument("--allow-external-paths", action="store_true", 
-                       help="Allow crawling outside the base path (e.g., allow /docs/ when starting from /dvwa/). "
-                            "By default, crawler stays within the same path prefix to avoid wandering to documentation or unrelated sections.")
+    # Crawl boundary arguments
+    parser.add_argument(
+        "-n", "--no-crawl", 
+        action="store_true",
+        help="Disable crawling and scans only the given URL"
+        )
+    parser.add_argument(
+        "-dl", "--depth-level", 
+        type=int, 
+        default=1,
+        help="Set crawl depth (Default depth is 1)"
+        )
+    parser.add_argument(
+        "-m", "--max-pages", 
+        type=int, 
+        default=10,
+        help="Max pages to crawl for the website (Max pages is set to 10 "
+        "by default)"
+        )
+    parser.add_argument(
+        "-e", "--allow-external-paths", 
+        action="store_true",
+        help="Allow crawling outside the base path (e.g., allow /docs/ when "
+        "starting from /dvwa/). By default, crawler stays within the same "
+        "path prefix to avoid wandering to documentation or unrelated "
+        "sections."
+        )
 
-    # Request controls (be gentle / avoid accidental DoS)
-    parser.add_argument("--delay", type=float, default=0.3, help="Delay between requests in seconds (default: 0.3)")
-    parser.add_argument("--timeout", type=int, default=10, help="Request timeout in seconds (default: 10)")
-    parser.add_argument("--user-agent", default=DEFAULT_UA, help="User-Agent header")
+    # Request control arguments
+    parser.add_argument(
+        "-d", "--delay", 
+        type=float, 
+        default=0.3,
+        help="Sets timing delay between requests in seconds (Default delay "
+        "is 0.3s)"
+        )
+    parser.add_argument(
+        "-t", "--timeout", 
+        type=int, 
+        default=10,
+        help="Sets timing to wait for request before timeout in seconds "
+        "(Default timeout is 10s)"
+        )
+    parser.add_argument(
+        "-a", "--user-agent", 
+        default=DEFAULT_UA,
+        help="Specifies User-Agent header to be used for the request"
+        )
 
-    # Targeting
-    parser.add_argument("--param", default=None, help="Only test a specific parameter name (optional)")
+    # Targeting arguments
+    parser.add_argument(
+        "--param", 
+        help="Specifies parameter name to be tested (optional)"
+        )
 
-    # Authentication
-    parser.add_argument("--login-url", default=None, help="URL of the login page/endpoint (optional)")
-    parser.add_argument("--username", default=None, help="Username for authentication (optional)")
-    parser.add_argument("--password", default=None, help="Password for authentication (optional)")
-    parser.add_argument("--username-field", default="username", help="Name of username field in login form (default: username)")
-    parser.add_argument("--password-field", default="password", help="Name of password field in login form (default: password)")
+    # Authentication arguments
+    parser.add_argument(
+        "-l", "--login-url", 
+        help="Specifies URL of the login page/endpoint (optional)"
+        )
+    parser.add_argument(
+        "-u", "--username", 
+        help="Specifies username to be used for authentication with -l flag"
+        )
+    parser.add_argument(
+        "-p", "--password", 
+        help="Specifies password to be used for authentication with -l flag"
+        )
+    parser.add_argument(
+        "-uf", "--username-field", 
+        default="username", 
+        help="Specifies name of username field in login form (Default is "
+        "set to username)"
+        )
+    parser.add_argument(
+        "-pf", "--password-field", 
+        default="password", 
+        help="Specifies name of password field in login form (Default is "
+        "set to password)"
+        )
 
-    # Output
-    parser.add_argument("--outdir", default="reports", help="Output directory (default: reports)")
-    parser.add_argument("--format", choices=["json", "html", "both"], default="both", help="Report format (default: both)")
+    # Output file arguments
+    parser.add_argument(
+        "-o", "--outdir", 
+        default="reports", 
+        help="Specifies output directory for report generated"
+        " (Default directort is reports)")
+    parser.add_argument(
+        "-f", "--format",
+        choices=["json", "html", "both"],
+        default="both",
+        help="Specifies format of generated report (Default is both)"
+        )
 
     args = parser.parse_args()
 
@@ -2414,6 +2478,19 @@ def main():
         enabled = set(range(1, 25))
         mode = "normal"
 
+    if args.no_crawl:
+        if (args.depth_level != 1 or args.max_pages != 10 
+            or args.allow_external_paths):
+            parser.error("--no-crawl flag cannot be used with --depth-level, "
+                         "--max-pages, or --allow-external-paths flags. Use "
+                         "-h for more information.")
+            
+    if args.login_url:
+        if not (args.username and args.password):
+            parser.error("--username and --password flags must be specified "
+                         "when --login_url is set. Use -h for more "
+                         "information")
+
     # Very important: authorized testing only
     print("[!] Reminder: Only scan systems you own or have explicit permission to test.\n")
 
@@ -2421,7 +2498,7 @@ def main():
         url=url,
         mode=mode,
         enabled_cwe_nums=enabled,
-        depth=max(0, args.depth),
+        depth=max(0, args.depth_level),
         max_pages=max(1, args.max_pages),
         delay_s=max(0.0, args.delay),
         timeout=max(1, args.timeout),
