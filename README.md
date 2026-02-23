@@ -12,10 +12,7 @@ Features:
   - CSRF-aware authentication support
   - Structured reporting with remediation guidance
 
-Scan Modes:
-  Normal:   All 19 CWEs (default)
-  Quick:    First 10 CWEs only (-q)
-  Specific: Selected CWEs only (-s 1,3,5)
+Scan Modes: Normal (Scans all 19 CWEs by default), Quick -q (Scans the first 10 CWEs only), Specific -s (Scans selected CWEs only)
 
 For testing purposes, destructive payloads have been commented out.
 
