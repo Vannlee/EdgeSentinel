@@ -1,13 +1,13 @@
 # SQL Injection (better for CWE-9 divide-by-zero, CWE-550)
-py testcode.py http://20.2.209.236/dvwa/vulnerabilities/sqli/ --login-url "http://20.2.209.236/dvwa/login.php" --username "admin" --password "password"
+py edgesentinel.py http://20.2.209.236/dvwa/vulnerabilities/sqli/ -l "http://20.2.209.236/dvwa/login.php" -u "admin" -p "password"
 
 # XSS (better for CWE-248, CWE-755)
-py testcode.py http://20.2.209.236/dvwa/vulnerabilities/xss_r/ --login-url "http://20.2.209.236/dvwa/login.php" --username "admin" --password "password" --no-crawl
+py edgesentinel.py http://20.2.209.236/dvwa/vulnerabilities/xss_r/ -l "http://20.2.209.236/dvwa/login.php" -u "admin" -p "password" -n
 
 # Upload (better for CWE-476, CWE-248)
-py testcode.py http://20.2.209.236/dvwa/vulnerabilities/upload/ --login-url "http://20.2.209.236/dvwa/login.php" --username "admin" --password "password"
+py edgesentinel.py http://20.2.209.236/dvwa/vulnerabilities/upload/ -l "http://20.2.209.236/dvwa/login.php" -u "admin" -p "password"
 
-py testcode.py http://20.2.209.236/dvwa/vulnerabilities/ --login-url "http://20.2.209.236/dvwa/login.php" --username "admin" --password "password" --max-pages 10
+py edgesentinel.py http://20.2.209.236/dvwa/vulnerabilities/ -l "http://20.2.209.236/dvwa/login.php" -u "admin" -p "password" -m 10
 
 # VulnLab scan (new 11 CWEs)
-py testcode.py http://20.2.209.236:5000 --depth 2
+py edgesentinel.py http://20.2.209.236:5000 -dl 2
