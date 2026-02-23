@@ -38,4 +38,4 @@ The following CWEs are what EdgeSentinel is able to test and identify:
 16. CWE-703 Improper Check or Handling of Exceptional Conditions
 17. CWE-754 Improper Check for Unusual or Exceptional Conditions
 18. CWE-755 Improper Handling of Exceptional Conditions
-    9. CWE-756 Missing Custom Error Page
+19. CWE-756 Missing Custom Error Page
