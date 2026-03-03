@@ -13,7 +13,7 @@ import sys
 
 app = Flask(__name__)
 
-# Disable Flask's default error handling to expose raw errors (CWE-24)
+# Disable Flask's default error handling to expose raw errors (CWE-756)
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['TRAP_HTTP_EXCEPTIONS'] = False
 
@@ -35,31 +35,31 @@ def index():
     <h1>VulnLab - CWE Test Application</h1>
     <p><strong>WARNING:</strong> Deliberately vulnerable endpoints for EdgeSentinel scanner testing.</p>
 
-    <h2>CWE-9 (Divide By Zero) - /api/calc</h2>
+    <h2>CWE-369 (Divide By Zero) - /api/calc</h2>
     <form action="/api/calc" method="GET">
         Divisor: <input type="text" name="divisor" value="5">
         <button type="submit">Calculate</button>
     </form>
 
-    <h2>CWE-16 (NULL Pointer) - /api/user</h2>
+    <h2>CWE-476 (NULL Pointer) - /api/user</h2>
     <form action="/api/user" method="GET">
         User ID: <input type="text" name="id" value="1">
         <button type="submit">Lookup User</button>
     </form>
 
-    <h2>CWE-4, CWE-12 (Extra Params, Status Changes) - /api/stats</h2>
+    <h2>CWE-235, CWE-394 (Extra Params, Status Changes) - /api/stats</h2>
     <form action="/api/stats" method="GET">
         Type: <input type="text" name="type" value="summary">
         <button type="submit">Get Stats</button>
     </form>
 
-    <h2>CWE-7, CWE-8, CWE-20 (Auth Bypass / Fail Open) - /admin/config</h2>
+    <h2>CWE-274, CWE-280, CWE-636 (Auth Bypass / Fail Open) - /admin/config</h2>
     <form action="/admin/config" method="GET">
         Role: <input type="text" name="role" value="user">
         <button type="submit">Get Config</button>
     </form>
 
-    <h2>CWE-5, CWE-22, CWE-23 (Uncaught Exception, Unusual Conditions) - /api/process</h2>
+    <h2>CWE-248, CWE-754, CWE-755 (Uncaught Exception, Unusual Conditions) - /api/process</h2>
     <form action="/api/process" method="GET">
         Value: <input type="text" name="value" value="hello">
         <button type="submit">Process</button>
@@ -68,7 +68,7 @@ def index():
 </html>"""
 
 
-# CWE-9 (369): Divide By Zero
+# CWE-369: Divide By Zero
 @app.route('/api/calc')
 def calculate():
     """Division calculator - vulnerable to divide-by-zero.
@@ -82,13 +82,13 @@ def calculate():
     except (ValueError, TypeError):
         return jsonify({"error": "'divisor' must be a number"}), 400
 
-    # VULNERABILITY CWE-9: No zero check before division
+    # VULNERABILITY CWE-369: No zero check before division
     result = 100.0 / d  # ZeroDivisionError if divisor=0
 
     return jsonify({"numerator": 100, "divisor": d, "result": result})
 
 
-# CWE-16 (476): NULL Pointer Dereference
+# CWE-476: NULL Pointer Dereference
 @app.route('/api/user')
 def get_user():
     """User lookup - vulnerable to NULL pointer dereference.
@@ -103,7 +103,7 @@ def get_user():
 
     user = users.get(str(user_id))  # Returns None for valid-looking but missing IDs
 
-    # VULNERABILITY CWE-16: No None check before accessing properties
+    # VULNERABILITY CWE-476: No None check before accessing properties
     # id=0, id=-1, id=999 etc. all return None and crash here
     return jsonify({
         "id": user["id"],
@@ -112,8 +112,8 @@ def get_user():
     })
 
 
-# CWE-4 (235): Improper Handling of Extra Parameters
-# CWE-12 (394): Unexpected Status Code Changes
+# CWE-235: Improper Handling of Extra Parameters
+# CWE-394: Unexpected Status Code Changes
 @app.route('/api/stats')
 def statistics():
     """Statistics endpoint - changes behavior with extra params"""
@@ -140,9 +140,9 @@ def statistics():
     })
 
 
-# CWE-7 (274): Improper Handling of Insufficient Privileges
-# CWE-8 (280): Improper Handling of Insufficient Permissions
-# CWE-20 (636): Not Failing Securely ('Failing Open')
+# CWE-274: Improper Handling of Insufficient Privileges
+# CWE-280: Improper Handling of Insufficient Permissions
+# CWE-636: Not Failing Securely ('Failing Open')
 @app.route('/admin/config')
 def admin_config():
     """Admin endpoint - vulnerable to failing open on missing/empty role.
@@ -151,7 +151,7 @@ def admin_config():
     """
     role = request.args.get('role')
 
-    # VULNERABILITY CWE-20: Fails open when role is missing or empty string
+    # VULNERABILITY CWE-636: Fails open when role is missing or empty string
     # Should return 403, but returns sensitive config instead
     if role is None or role.strip() == '':
         return jsonify({
@@ -177,9 +177,9 @@ def admin_config():
     return jsonify({"error": "Forbidden: insufficient privileges"}), 403
 
 
-# CWE-5 (248): Uncaught Exception
-# CWE-22 (754): Improper Check for Unusual or Exceptional Conditions
-# CWE-23 (755): Improper Handling of Exceptional Conditions
+# CWE-248: Uncaught Exception
+# CWE-754: Improper Check for Unusual or Exceptional Conditions
+# CWE-755: Improper Handling of Exceptional Conditions
 @app.route('/api/process')
 def process_data():
     """Data processor - vulnerable to uncaught exceptions on edge cases.
@@ -188,20 +188,20 @@ def process_data():
     """
     value = request.args.get('value', 'hello')
 
-    # VULNERABILITY CWE-22/23: No validation for special float string values
+    # VULNERABILITY CWE-754/755: No validation for special float string values
     # NaN and Infinity are valid Python floats but cause arithmetic issues
     if value in ['NaN', 'Infinity', '-Infinity', 'nan', 'inf', '-inf']:
         raise ValueError(f"Unhandled special numeric value: {value}")
 
-    # VULNERABILITY CWE-5/22: Integer overflow not caught
+    # VULNERABILITY CWE-248/754: Integer overflow not caught
     if value.lstrip('-').isdigit() and abs(int(value)) > 2147483647:
         raise OverflowError(f"Integer overflow: {value}")
 
-    # VULNERABILITY CWE-22/23: Large inputs not validated before processing
+    # VULNERABILITY CWE-754/755: Large inputs not validated before processing
     if len(value) > 10000:
         raise MemoryError("Input exceeds processing capacity")
 
-    # VULNERABILITY CWE-22: Unicode/encoding issues not handled
+    # VULNERABILITY CWE-754: Unicode/encoding issues not handled
     if any(ord(c) > 127 for c in value):
         raise UnicodeError(f"Non-ASCII character in input: {repr(value)}")
 
@@ -212,7 +212,7 @@ def process_data():
     })
 
 
-# CWE-24 (756): Missing Custom Error Page
+# CWE-756: Missing Custom Error Page
 # Flask's default error handlers expose stack traces and technical details
 # We explicitly disable custom error handling to expose this
 
