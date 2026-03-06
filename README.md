@@ -16,6 +16,32 @@ Scan Modes: Normal (Scans all 19 CWEs by default), Quick -q (Scans the first 10 
 
 For testing purposes, destructive payloads have been commented out.
 
+Testing Environments:
+
+EdgeSentinel was validated against three distinct targets to measure CWE detection coverage:
+
+1. DVWA (Damn Vulnerable Web Application)
+   - A deliberately vulnerable PHP/MySQL web application hosted on Apache
+   - Provides real-world vulnerable scenarios (SQL injection, XSS, file inclusion)
+   - Used to measure detection coverage on an industry-standard benchmark target
+   - Source: [DVWA](https://github.com/digininja/DVWA)
+   
+
+2. VulnLab (Purpose-built Flask application)
+   - A custom-built deliberately vulnerable Flask application created to cover
+     CWEs that DVWA does not expose
+   - Each endpoint is engineered to trigger a specific CWE when tested with
+     EdgeSentinel's edge-case payloads
+   - Source: [VulnLab](https://github.com/Vannlee/EdgeSentinel/tree/main/vulnlab)
+
+3. Apache2 Default Landing Page (Control)
+   - The default Apache2 "It works!" page with no application logic
+   - Used as a negative control to measure false positive rate
+   - Validates that EdgeSentinel does not flag benign servers incorrectly
+   - Expected result: No findings 
+
+
+
 The following CWEs are what EdgeSentinel is able to test and identify:
 1. CWE-209 Generation of Error Message Containing Sensitive Information
 2. CWE-215 Insertion of Sensitive Information Into Debugging Code
